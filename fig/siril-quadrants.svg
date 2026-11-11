@@ -1,0 +1,15 @@
+<svg viewBox="0 0 640 300" role="img" aria-label="Siril quadrants" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif"><defs>
+  <radialGradient id="SirilquadranSTAR" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="35%" stop-color="#fff1d6" stop-opacity="0.95"/>
+    <stop offset="100%" stop-color="#ffd9a0" stop-opacity="0"/>
+  </radialGradient>
+  <marker id="SirilquadranARR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#a8b6c8"/></marker>
+  <marker id="SirilquadranARRB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#64c7ff"/></marker>
+  <marker id="SirilquadranARRO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#ffab5e"/></marker>
+  <marker id="SirilquadranARRG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#82e0aa"/></marker>
+</defs><rect width="640" height="300" rx="10" fill="#0c141d"/><rect x="150" y="30" width="340" height="226" fill="#101c28" stroke="#a8b6c8" stroke-width="1.5"/><line x1="320.0" y1="30.0" x2="320.0" y2="256.0" stroke="#a8b6c8" stroke-width="1"/><line x1="150.0" y1="143.0" x2="490.0" y2="143.0" stroke="#a8b6c8" stroke-width="1"/><clipPath id="SirilquadranQC"><rect x="150" y="30" width="340" height="226"/></clipPath><g clip-path="url(#SirilquadranQC)"><circle cx="320.0" cy="143.0" r="153.1" fill="none" stroke="#ffab5e" stroke-width="1.5" stroke-dasharray="6 4"/></g><circle cx="320.0" cy="143.0" r="51.0" fill="#82e0aa" fill-opacity="0.12" stroke="#82e0aa" stroke-width="1.5"/><text x="235.0" y="91.5" font-size="15" fill="#e7edf5" text-anchor="middle" font-weight="bold">m₁ TL</text><text x="405.0" y="91.5" font-size="15" fill="#e7edf5" text-anchor="middle" font-weight="bold">m₂ TR</text><text x="235.0" y="204.5" font-size="15" fill="#e7edf5" text-anchor="middle" font-weight="bold">m₃ BL</text><text x="405.0" y="204.5" font-size="15" fill="#e7edf5" text-anchor="middle" font-weight="bold">m₄ BR</text><text x="320.0" y="148.0" font-size="13" fill="#82e0aa" text-anchor="middle" font-weight="normal">inner</text><text x="156.0" y="248.0" font-size="12" fill="#ffab5e" text-anchor="start" font-weight="normal">outer: r > 0.75 R</text><text x="502.0" y="143.0" font-size="12" fill="#a8b6c8" text-anchor="start" font-weight="normal">R = half diagonal</text><text x="320.0" y="285.0" font-size="13" fill="#a8b6c8" text-anchor="middle" font-weight="normal">each value: 25%-trimmed mean of the star FWHMs in that area</text></svg>

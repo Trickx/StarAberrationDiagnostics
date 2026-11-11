@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Icon of StarAberrationDiagnostics: a small vector map - a round star in
+     the center, stars elongated radially toward the edge (colored like the
+     script's ellipses, blue = round to red = elongated), the tilt axis and a
+     coma streamline. Copyright (C) 2026 Sven Kopetzki, GPL-3.0-or-later. -->
+<svg width="512" height="512" version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1026"/>
+      <stop offset="1" stop-color="#2a3a78"/>
+    </linearGradient>
+    <radialGradient id="core" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.6" stop-color="#e8f0ff"/>
+      <stop offset="1" stop-color="#9fc0ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="24" y="24" width="464" height="464" rx="36" fill="url(#sky)"/>
+
+  <!-- tilt axis -->
+  <line x1="62" y1="333" x2="450" y2="179" stroke="#66e0ff" stroke-width="9" stroke-dasharray="24 18" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- center star: round -->
+  <circle cx="256" cy="256" r="46" fill="url(#core)"/>
+  <circle cx="256" cy="256" r="18" fill="#ffffff"/>
+
+  <!-- inner ring: slightly elongated, radial -->
+  <g fill="none" stroke-width="12">
+    <ellipse cx="256" cy="140" rx="16" ry="26" stroke="#5aa8ff"/>
+    <ellipse cx="256" cy="372" rx="16" ry="26" stroke="#5aa8ff"/>
+    <ellipse cx="140" cy="256" rx="26" ry="16" stroke="#5aa8ff"/>
+    <ellipse cx="372" cy="256" rx="26" ry="16" stroke="#5aa8ff"/>
+  </g>
+
+  <!-- corners: strongly elongated, radial -->
+  <g fill="none" stroke-width="13">
+    <ellipse cx="0" cy="0" rx="46" ry="17" stroke="#ff9a3c" transform="translate(112 112) rotate(45)"/>
+    <ellipse cx="0" cy="0" rx="46" ry="17" stroke="#ff4d3a" transform="translate(400 112) rotate(-45)"/>
+    <ellipse cx="0" cy="0" rx="46" ry="17" stroke="#ff4d3a" transform="translate(112 400) rotate(-45)"/>
+    <ellipse cx="0" cy="0" rx="46" ry="17" stroke="#ff9a3c" transform="translate(400 400) rotate(45)"/>
+  </g>
+  <g fill="#ffffff">
+    <circle cx="256" cy="140" r="5"/><circle cx="256" cy="372" r="5"/>
+    <circle cx="140" cy="256" r="5"/><circle cx="372" cy="256" r="5"/>
+    <circle cx="112" cy="112" r="5"/><circle cx="400" cy="112" r="5"/>
+    <circle cx="112" cy="400" r="5"/><circle cx="400" cy="400" r="5"/>
+  </g>
+
+  <!-- coma streamline with arrowhead -->
+  <path d="M 298 300 Q 360 336 446 318" fill="none" stroke="#000000" stroke-opacity="0.55" stroke-width="20" stroke-linecap="round"/>
+  <path d="M 298 300 Q 360 336 446 318" fill="none" stroke="#ffb040" stroke-width="11" stroke-linecap="round"/>
+  <path d="M 446 318 L 414 296 M 446 318 L 418 344" fill="none" stroke="#ffb040" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

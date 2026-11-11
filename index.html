@@ -1,0 +1,70 @@
+---
+layout: pi_handbook
+lang: en
+title: "StarAberrationDiagnostics - PixInsight Update Repository"
+description: "StarAberrationDiagnostics for PixInsight: installation and a handbook that explains how the script diagnoses tilt, spacing, coma, collimation and tracking from the shapes of the stars."
+alternates:
+  - lang: en
+    href: https://tricx.de/pi-scripts/StarAberrationDiagnostics/
+  - lang: de
+    href: https://tricx.de/pi-scripts/StarAberrationDiagnostics/de/
+# The chapters are the files in _sad_handbook/en/ (title and order in their front matter).
+handbook: en
+---
+    <section class="card">
+      <div class="title">
+        <img src="StarAberrationDiagnostics.svg" alt="" />
+        <div>
+          <h1>StarAberrationDiagnostics</h1>
+          <p>PixInsight update repository for the <strong>StarAberrationDiagnostics</strong> script.</p>
+        </div>
+        <nav class="lang" aria-label="Language">
+          <span aria-current="page">EN</span>
+          <a href="de/" hreflang="de" lang="de" title="Deutsche Version">DE</a>
+        </nav>
+      </div>
+      <p class="ok">This page is informational. For PixInsight, use the repository URL shown below.</p>
+    </section>
+
+    <section class="card">
+      <h2>Repository URL for PixInsight</h2>
+      <p><code>https://tricx.de/pi-scripts/StarAberrationDiagnostics/</code></p>
+    </section>
+
+    <section class="card">
+      <h2>Installation in PixInsight</h2>
+      <ol>
+        <li>Resources &gt; Updates &gt; Manage Repositories</li>
+        <li>Add repository: <code>https://tricx.de/pi-scripts/StarAberrationDiagnostics/</code></li>
+        <li>Run Check for Updates</li>
+        <li>Run via Script &gt; Tricx &gt; StarAberrationDiagnostics</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>What it does</h2>
+      <p>Diagnoses the optical system from the shapes of the stars across the field:</p>
+      <ul>
+        <li>Vector map of every star's elongation, with streamlines and an orientation heatmap</li>
+        <li>Sensor tilt from the FWHM across the field (Siril-style quadrants, 11&times;11 grid, tilt axis, &Delta;z and tilt angle)</li>
+        <li>Corrector spacing and field curvature from the radial/tangential pattern at the field edge</li>
+        <li>Coma field and coma-free point from the asymmetry of each star, for collimation</li>
+        <li>The tracking error shared by all stars, measured and optionally subtracted</li>
+        <li>An assessment of the results with suggested corrections, in the order in which to work through them</li>
+        <li>A series analysis of frames before and after a meridian flip, including the plate-solve distortion</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Screenshot</h2>
+      <img src="StarAberrationDiagnostics.png" alt="StarAberrationDiagnostics dialog with the vector map preview" />
+    </section>
+
+    <section class="card toc" id="handbook">
+      <h2>Handbook: how the diagnostics work</h2>
+      <p>The chapters below explain every computation of the script: what each error does to the stars, and how
+      the script captures it mathematically. They build on each other, but each can be read on its own.</p>
+      {% include pi-handbook-toc.html %}
+      <p>In depth (in German): <a href="de/koma.html" hreflang="de">Koma - wie sie entsteht</a>, how coma arises, with computed ray traces and a simulator,
+      and <a href="de/newton.html" hreflang="de">Typische Fehler eines Newton-Teleskops</a>, the typical errors of a Newtonian, with computed star images.</p>
+    </section>

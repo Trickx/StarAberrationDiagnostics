@@ -1,0 +1,15 @@
+<svg viewBox="0 0 640 240" role="img" aria-label="Sign ambiguity" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif"><defs>
+  <radialGradient id="SignambiguitSTAR" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="35%" stop-color="#fff1d6" stop-opacity="0.95"/>
+    <stop offset="100%" stop-color="#ffd9a0" stop-opacity="0"/>
+  </radialGradient>
+  <marker id="SignambiguitARR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#a8b6c8"/></marker>
+  <marker id="SignambiguitARRB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#64c7ff"/></marker>
+  <marker id="SignambiguitARRO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#ffab5e"/></marker>
+  <marker id="SignambiguitARRG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#82e0aa"/></marker>
+</defs><rect width="640" height="240" rx="10" fill="#0c141d"/><line x1="120.0" y1="120.0" x2="520.0" y2="120.0" stroke="#82e0aa" stroke-width="2" stroke-dasharray="6 4"/><text x="526.0" y="125.0" font-size="13" fill="#82e0aa" text-anchor="start" font-weight="normal">best focus</text><line x1="132.3" y1="90.3" x2="507.7" y2="149.7" stroke="#64c7ff" stroke-width="3"/><line x1="132.3" y1="149.7" x2="507.7" y2="90.3" stroke="#ffab5e" stroke-width="3" stroke-dasharray="8 5"/><text x="120.0" y="86.0" font-size="13" fill="#64c7ff" text-anchor="end" font-weight="normal">variant 1</text><text x="120.0" y="162.0" font-size="13" fill="#ffab5e" text-anchor="end" font-weight="normal">variant 2</text><circle cx="150.0" cy="200.0" r="9.0" fill="url(#SignambiguitSTAR)"/><circle cx="490.0" cy="200.0" r="9.0" fill="url(#SignambiguitSTAR)"/><circle cx="320.0" cy="200.0" r="4.0" fill="url(#SignambiguitSTAR)"/><text x="320.0" y="230.0" font-size="13" fill="#a8b6c8" text-anchor="middle" font-weight="normal">the same blur at both edges — the sign of Δz is unknown from one frame</text></svg>

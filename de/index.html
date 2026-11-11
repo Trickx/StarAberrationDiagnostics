@@ -1,0 +1,70 @@
+---
+layout: pi_handbook
+lang: de
+title: "StarAberrationDiagnostics - PixInsight Update-Repository"
+description: "StarAberrationDiagnostics für PixInsight: Installation und ein Handbuch, das erklärt, wie das Script Verkippung, Backfokus, Koma, Kollimation und Nachführung aus den Formen der Sterne diagnostiziert."
+alternates:
+  - lang: en
+    href: https://tricx.de/pi-scripts/StarAberrationDiagnostics/
+  - lang: de
+    href: https://tricx.de/pi-scripts/StarAberrationDiagnostics/de/
+# The chapters are the files in _sad_handbook/de/ (title and order in their front matter).
+handbook: de
+---
+    <section class="card">
+      <div class="title">
+        <img src="../StarAberrationDiagnostics.svg" alt="" />
+        <div>
+          <h1>StarAberrationDiagnostics</h1>
+          <p>PixInsight-Update-Repository für das Script <strong>StarAberrationDiagnostics</strong>.</p>
+        </div>
+        <nav class="lang" aria-label="Sprache">
+          <a href="../" hreflang="en" lang="en" title="English version">EN</a>
+          <span aria-current="page">DE</span>
+        </nav>
+      </div>
+      <p class="ok">Diese Seite dient nur zur Information. In PixInsight wird die unten angegebene Repository-URL verwendet.</p>
+    </section>
+
+    <section class="card">
+      <h2>Repository-URL für PixInsight</h2>
+      <p><code>https://tricx.de/pi-scripts/StarAberrationDiagnostics/</code></p>
+    </section>
+
+    <section class="card">
+      <h2>Installation in PixInsight</h2>
+      <ol>
+        <li>Resources &gt; Updates &gt; Manage Repositories</li>
+        <li>Repository hinzufügen: <code>https://tricx.de/pi-scripts/StarAberrationDiagnostics/</code></li>
+        <li>Check for Updates ausführen</li>
+        <li>Starten über Script &gt; Tricx &gt; StarAberrationDiagnostics</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h2>Was das Script macht</h2>
+      <p>Es diagnostiziert das optische System anhand der Sternformen über das ganze Bildfeld:</p>
+      <ul>
+        <li>Vektorkarte der Elongation jedes Sterns, mit Stromlinien und einer Orientierungs-Heatmap</li>
+        <li>Sensorverkippung aus der FWHM über das Bildfeld (Quadranten wie in Siril, 11&times;11-Raster, Kippachse, &Delta;z und Kippwinkel)</li>
+        <li>Korrektorabstand und Bildfeldwölbung aus dem radialen/tangentialen Muster am Bildrand</li>
+        <li>Komafeld und komafreier Punkt aus der Asymmetrie jedes Sterns, für die Kollimation</li>
+        <li>Der allen Sternen gemeinsame Nachführfehler, gemessen und optional abgezogen</li>
+        <li>Eine Bewertung der Ergebnisse mit Korrekturvorschlägen, in der Reihenfolge, in der man sie abarbeiten sollte</li>
+        <li>Eine Serienanalyse von Aufnahmen vor und nach dem Meridian-Flip, einschließlich der Plate-Solve-Verzeichnung</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Screenshot</h2>
+      <img src="../StarAberrationDiagnostics.png" alt="Dialog von StarAberrationDiagnostics mit der Vorschau der Vektorkarte" />
+    </section>
+
+    <section class="card toc" id="handbook">
+      <h2>Handbuch: So funktioniert die Diagnose</h2>
+      <p>Die folgenden Kapitel erklären jede Berechnung des Scripts: was jeder Fehler mit den Sternen macht und wie
+      das Script ihn mathematisch erfasst. Sie bauen aufeinander auf, lassen sich aber auch einzeln lesen.</p>
+      {% include pi-handbook-toc.html %}
+      <p>Vertiefung: <a href="koma.html">Koma - wie sie entsteht</a>, mit berechneten Strahlengängen und einem Simulator,
+      und <a href="newton.html">Typische Fehler eines Newton-Teleskops</a>, mit berechneten Sternbildern.</p>
+    </section>

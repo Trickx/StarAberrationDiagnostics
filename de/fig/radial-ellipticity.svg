@@ -1,0 +1,15 @@
+<svg viewBox="0 0 640 250" role="img" aria-label="Radiale Elliptizität" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Helvetica Neue, Arial, sans-serif"><defs>
+  <radialGradient id="RadialelliptSTAR" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="35%" stop-color="#fff1d6" stop-opacity="0.95"/>
+    <stop offset="100%" stop-color="#ffd9a0" stop-opacity="0"/>
+  </radialGradient>
+  <marker id="RadialelliptARR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#a8b6c8"/></marker>
+  <marker id="RadialelliptARRB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#64c7ff"/></marker>
+  <marker id="RadialelliptARRO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#ffab5e"/></marker>
+  <marker id="RadialelliptARRG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#82e0aa"/></marker>
+</defs><rect width="640" height="250" rx="10" fill="#0c141d"/><circle cx="130.0" cy="190.0" r="7.0" fill="url(#RadialelliptSTAR)"/><text x="130.0" y="216.0" font-size="12" fill="#a8b6c8" text-anchor="middle" font-weight="normal">Bildmitte</text><line x1="130.0" y1="190.0" x2="420.0" y2="80.0" stroke="#a8b6c8" stroke-width="1.3" stroke-dasharray="5 4"/><line x1="420.0" y1="80.0" x2="522.8" y2="41.0" stroke="#a8b6c8" stroke-width="1.2" marker-end="url(#RadialelliptARR)"/><text x="530.3" y="54.2" font-size="12" fill="#a8b6c8" text-anchor="start" font-weight="normal">radiale Richtung φ</text><ellipse cx="420.0" cy="80.0" rx="34.0" ry="16.0" fill="url(#RadialelliptSTAR)" transform="rotate(-55.8 420.0 80.0)"/><ellipse cx="420.0" cy="80.0" rx="21.1" ry="9.9" fill="none" stroke="#64c7ff" stroke-width="1.4" transform="rotate(-55.8 420.0 80.0)"/><line x1="420.0" y1="80.0" x2="459.4" y2="22.1" stroke="#64c7ff" stroke-width="2" marker-end="url(#RadialelliptARRB)"/><text x="462.7" y="17.2" font-size="12" fill="#64c7ff" text-anchor="start" font-weight="normal">große Achse ψ</text><text x="40.0" y="40.0" font-size="17" fill="#ffab5e" text-anchor="start" font-weight="bold">eps_rad = ε · cos 2(ψ − φ)</text><text x="40.0" y="64.0" font-size="13" fill="#a8b6c8" text-anchor="start" font-weight="normal">+ε: entlang des Radius · −ε: quer dazu · 0: bei 45°</text></svg>

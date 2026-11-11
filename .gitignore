@@ -1,0 +1,17 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+
+# Generated
+pidoc-src/build/
+.package/
+
+# Release archives (published from the website repository)
+*.tar.gz
+
+# Local tools
+.claude/
+.DS_Store

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Koma - wie sie entsteht</title>
+  <meta name="description" content="Wie Koma entsteht: Strahlengang am Parabolspiegel, Komakreise, typische Größen, Korrektorabstand und Dejustage, mit einem interaktiven Simulator." />
+  {{STYLE}}
+  <style>
+    .back { font-size: 0.92rem; }
+    .stars { display: block; width: 100%; height: auto; border-radius: 10px; }
+    .sim { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px 20px; margin: 12px 0 16px 0; }
+    .sim label { display: flex; flex-direction: column; gap: 4px; font-size: 0.9rem; color: var(--muted); }
+    .sim label span b { color: var(--text); font-weight: 600; }
+    .sim input[type=range] { width: 100%; accent-color: var(--accent); }
+    .sim select, .sim input[type=number] {
+      background: #0c141d; color: var(--text); border: 1px solid #2a3b4f; border-radius: 6px;
+      padding: 4px 6px; font: inherit; font-size: 0.92rem;
+    }
+    .sim label.check { flex-direction: row; align-items: center; gap: 8px; }
+    .readout {
+      background: #0c141d; border: 1px solid #2a3b4f; border-radius: 6px; padding: 8px 12px;
+      margin: 12px 0 0 0; font-size: 0.92rem; color: var(--muted);
+    }
+    .readout b { color: var(--text); }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <p class="back"><a href="./#coma">← Handbuch StarAberrationDiagnostics, Kapitel 9: Koma und Kollimation</a></p>
+      <h1>Koma - wie sie entsteht</h1>
+      <p>Warum Sterne am Bildrand zu kleinen Kometen werden, wie stark das ist, was ein Korrektor damit macht und
+      wie eine Dejustage das Bild verschiebt. Die Abbildungen sind aus der Optik berechnet, nicht gezeichnet.</p>
+      <div class="note">
+        <p><b>Gilt für Teleskope mit parabolischem Hauptspiegel.</b> Alles Folgende - Strahlengang, Formeln, Tabelle
+        und Simulator - beschreibt die Koma eines Parabolspiegels. Das sind vor allem:</p>
+        <ul>
+          <li><b>Newton-Teleskope</b>, auch als Dobson, ohne oder mit Komakorrektor (ihre übrigen typischen Fehler beschreibt die Seite <a href="newton.html">Typische Fehler eines Newton-Teleskops</a>);</li>
+          <li><b>Newton-Astrographen</b> mit fest eingebautem Korrektor (deren Restkoma folgt Kapitel 5);</li>
+          <li><b>klassische Cassegrains</b> (parabolischer Haupt-, hyperbolischer Fangspiegel): Sie haben dieselbe
+              Koma wie ein Parabolspiegel mit dem Öffnungsverhältnis des Gesamtsystems.</li>
+        </ul>
+        <p>Nicht gemeint sind Systeme, deren Koma anders entsteht oder bereits korrigiert ist: Ritchey-Chrétien und
+        andere aplanatische Systeme (z. B. EdgeHD) sind im Feld weitgehend komafrei, Schmidt-Cassegrains mit
+        sphärischem Hauptspiegel und Refraktoren folgen anderen Formeln. Bei allen kann eine <b>Dejustage</b>
+        (Kapitel 6) trotzdem Koma erzeugen.</p>
+      </div>
+    </section>
+
+    <section class="card" id="look"><h2><span class="chapter-no">1.</span>Was man sieht</h2>
+<p>In der Bildmitte ist der Stern rund. Je weiter er von der Mitte entfernt ist, desto mehr bekommt er einen
+hellen Kern mit einem schwachen, fächerförmigen Schweif, der von der Bildmitte weg zeigt. Der Fächer wächst
+<b>linear</b> mit dem Abstand: doppelt so weit außen, doppelt so lang.</p>
+<figure><canvas class="stars" id="fig1" width="640" height="230" aria-label="Simulierte Sterne mit Koma in der Mitte, auf halbem Weg und in der Ecke"></canvas><figcaption>Abbildung 1 - Derselbe Stern an drei Stellen des Sensors, berechnet für einen Newton f/4 mit 800 mm Brennweite ohne Komakorrektor, 2,5″ Seeing. Jede Kachel zeigt 220 × 220 µm; die Bildmitte liegt links.</figcaption></figure>
+</section>
+
+<section class="card" id="mirror"><h2><span class="chapter-no">2.</span>Auf der Achse perfekt, daneben nicht</h2>
+<p>Ein Parabolspiegel hat eine besondere Eigenschaft: Er bündelt Licht, das <b>parallel zur Achse</b> einfällt,
+exakt in einem Punkt - das ist geradezu die Definition der Parabel. Für einen Stern genau auf der Achse gibt es
+deshalb keinen Abbildungsfehler, ganz gleich wie schnell der Spiegel ist.</p>
+<figure>{{FIG_AXIS}}<figcaption>Abbildung 2 - Exakter Strahlengang für einen Stern auf der Achse. Die Farben stehen für die Zonen des Spiegels, von innen (blau) nach außen (orange); alle treffen sich im Brennpunkt. Gezeichnet ohne Fangspiegel.</figcaption></figure>
+<p>Fällt das Licht <b>schräg</b> ein, ist die Symmetrie gebrochen. Jedes Strahlenpaar aus einer Zone (oben und
+unten am Spiegel) trifft sich zwar noch an einem Punkt - aber dieser Punkt liegt umso weiter vom Bildpunkt des
+Hauptstrahls (weiß, durch die Spiegelmitte) entfernt, je weiter außen die Zone liegt. Der Ausschnitt zeigt es:</p>
+<figure>{{FIG_OFF}}<figcaption>Abbildung 3 - Derselbe Spiegel, der Stern 5° neben der Achse. Im vergrößerten Ausschnitt treffen sich die Strahlen jeder Zone an einem eigenen Punkt; die äußeren Zonen (orange) landen am weitesten vom Hauptstrahl (weiß) entfernt. Zur Verdeutlichung ist der Spiegel mit f/1,5 stark übertrieben schnell.</figcaption></figure>
+<p>Anders gesagt: <b>Jede Zone des Spiegels bildet mit einem etwas anderen Maßstab ab.</b> Ein optisches System,
+bei dem alle Zonen denselben Maßstab haben, erfüllt die <i>Abbe'sche Sinusbedingung</i> und heißt
+<b>aplanatisch</b>. Der Parabolspiegel verletzt sie, und die Folge dieser Verletzung ist genau die Koma.</p>
+</section>
+
+<section class="card" id="circles"><h2><span class="chapter-no">3.</span>Aus Zonen werden Kreise</h2>
+<p>Die Abbildung 3 zeigt nur einen Schnitt durch den Spiegel. Betrachtet man eine ganze Zone - einen Ring auf dem
+Spiegel -, dann bildet sie den Stern nicht als Punkt, sondern als <b>Kreis</b> ab, den <i>Komakreis</i>. Für Koma
+dritter Ordnung landet der Strahl aus der Zone <i class="v">ρ</i> (0 = Mitte, 1 = Rand der Öffnung) beim Winkel
+<i class="v">φ</i> auf dem Spiegel an der Stelle</p>
+<div class="eq"><div>Δ<sub>r</sub> = C · ρ² · (2 + cos 2φ)&nbsp;&nbsp;&nbsp; <span class="c">radial, von der Bildmitte weg</span></div><div>Δ<sub>t</sub> = C · ρ² · sin 2φ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="c">quer dazu</span></div><div><span class="c">gemessen vom Bildpunkt des Hauptstrahls aus; C ist die Stärke der Koma an dieser Feldposition (Kapitel 4)</span></div></div>
+<p>Daraus folgt die ganze Gestalt des Kometen:</p>
+<ul>
+  <li>Jede Zone ergibt einen Kreis mit dem Radius <b>C·ρ²</b>, dessen Mittelpunkt um <b>2·C·ρ²</b> nach außen
+      verschoben ist. Äußere Zonen: große, weit verschobene Kreise; innere Zonen: kleine Kreise nahe am Kern.</li>
+  <li>Weil Radius und Versatz im selben Verhältnis wachsen, berühren alle Kreise dieselben zwei Geraden: Sie
+      liegen in einem <b>Keil von 60°</b>.</li>
+  <li>Wegen des doppelten Winkels 2φ läuft ein Strahl, der die Zone <b>einmal</b> umrundet, den Komakreis
+      <b>zweimal</b> ab. Gegenüberliegende Punkte der Zone landen auf demselben Bildpunkt.</li>
+  <li>Die inneren Zonen konzentrieren ihr Licht auf winzige Kreise: Das ergibt den <b>hellen Kern</b>. Die äußeren
+      Zonen tragen zwar am meisten Licht, verteilen es aber auf große Kreise: Das ergibt den <b>schwachen
+      Fächer</b>.</li>
+</ul>
+<figure>{{FIG_ZONES}}<figcaption>Abbildung 4 - Links die Öffnung mit vier Zonen und acht Punkten auf der äußeren Zone, rechts deren Bilder. Jede Zone wird zu einem Kreis; die Punkte 1 und 5, 2 und 6 usw. treffen sich. Alle Kreise liegen im 60°-Keil, der Kern am Hauptstrahl.</figcaption></figure>
+<p>Der Komet ist damit <b>3·C</b> lang (radial, „tangentiale Koma“) und <b>2·C</b> breit („sagittale Koma“ ist
+C, der Radius des größten Kreises).</p>
+</section>
+
+<section class="card" id="size"><h2><span class="chapter-no">4.</span>Wie stark ist die Koma?</h2>
+<p>Für einen Parabolspiegel hängt die Stärke nur vom Abstand <i class="v">h</i> des Sterns von der optischen Achse
+in der Brennebene und vom Öffnungsverhältnis <i class="v">N</i> = f/D ab:</p>
+<div class="eq"><div>C = h / (16 · N²),&nbsp;&nbsp;&nbsp; Länge des Kometen = 3 · C = 3 h / (16 N²)</div><div>als Winkel am Himmel:&nbsp;&nbsp; 3 · θ / (16 N²),&nbsp;&nbsp; θ = Feldwinkel des Sterns</div><div><span class="c">linear in h, quadratisch in 1/N: f/4 hat bei gleichem h viermal so viel Koma wie f/8</span></div></div>
+<p>Bemerkenswert: Bei gleicher Position auf dem Sensor hängt die Länge in Mikrometern nicht von der Brennweite ab,
+nur von N. Typische Werte (in Pixeln für 3,76 µm, z. B. IMX571):</p>
+{{TABLE}}
+<p>Zum Vergleich: Ein gut fokussierter Stern hat bei 2 - 3″ Seeing und 800 mm Brennweite eine FWHM von etwa
+10 µm. Bei f/4 übertrifft die Koma das Seeing schon wenige Millimeter neben der Achse; das komafreie Feld eines
+schnellen Newtons ist winzig. Bei f/8 bleibt der Komet auch in der Ecke eines APS-C-Sensors deutlich kleiner.</p>
+</section>
+
+<section class="card" id="corrector"><h2><span class="chapter-no">5.</span>Der Komakorrektor und sein Abstand</h2>
+<p>Ein Komakorrektor ist ein Linsensystem vor dem Sensor, das selbst Koma erzeugt - mit <b>umgekehrtem
+Vorzeichen</b> und ebenfalls linear in h. Im richtigen Abstand zum Sensor heben sich beide auf, über das ganze
+Feld. Im falschen Abstand bleibt ein Rest, der wieder linear mit h wächst:</p>
+<ul>
+  <li><b>Unterkorrigiert</b> - der Spiegel überwiegt: Die Fächer zeigen wie ohne Korrektor von der Mitte weg, nur
+      kürzer. Nach der Faustregel aus <a href="./#spacing">Kapitel 8 des Handbuchs</a> ist der Abstand Korrektor-Sensor dann zu klein.</li>
+  <li><b>Überkorrigiert</b> - der Korrektor überwiegt: Die Fächer zeigen zur Bildmitte hin. Der Abstand ist dann
+      eher zu groß.</li>
+</ul>
+<p>Welche Richtung genau gilt, hängt vom Korrektor ab; die Anleitung des Herstellers hat das letzte Wort. Im
+Simulator (Kapitel 7) lassen sich beide Fälle einstellen.</p>
+</section>
+
+<section class="card" id="decollimation"><h2><span class="chapter-no">6.</span>Dejustage: der komafreie Punkt wandert</h2>
+<p>Ein verkippter Haupt- oder Fangspiegel, ein dezentrierter oder schief sitzender Korrektor fügt dem Bild eine
+Koma hinzu, die über das ganze Feld <b>gleich</b> ist - gleiche Stärke, gleiche Richtung. Zusammen mit der
+Feldkoma, die linear mit dem Ort wächst, ergibt sich</p>
+<div class="eq"><div>Koma(P) = k · (P − P<sub>0</sub>) / R</div><div><span class="c">P Position auf dem Sensor, R halbe Diagonale, k Stärke und Vorzeichen der Feldkoma, P<sub>0</sub> komafreier Punkt</span></div></div>
+<p>Der konstante Anteil verschiebt also nur den Punkt, an dem die Koma verschwindet: von der Bildmitte zu
+<i class="v">P<sub>0</sub></i>. Ohne Korrektor ist <i class="v">P<sub>0</sub></i> die optische Achse - liegt sie
+neben der Bildmitte, ist das Teleskop dejustiert (<a href="./#coma">Handbuch, Kapitel 9</a>; wie man einen Newton kollimiert, steht unter <a href="newton.html#collimation">Typische Fehler eines Newton-Teleskops</a>). Ist die Feldkoma gut korrigiert (k ≈ 0), bleibt dagegen nur der
+konstante Anteil: Alle Sterne haben dann einen Fächer in dieselbe Richtung. Das kann auf den ersten Blick wie ein
+Nachführfehler aussehen, ist aber <b>einseitig</b> (Kern und Schweif), während die Nachführung Sterne
+<b>symmetrisch</b> in die Länge zieht (<a href="./#tracking">Handbuch, Kapitel 5</a>).</p>
+</section>
+
+<section class="card" id="simulator"><h2><span class="chapter-no">7.</span>Simulator</h2>
+<p>Jede Kachel zeigt einen Stern an der entsprechenden Stelle des Sensors (Ecken, Kanten, Mitte), berechnet aus
+40&nbsp;000 Strahlen durch zufällige Punkte der Öffnung nach den Formeln aus Kapitel 3, plus Seeing. Ein kleiner
+Pfeil in jeder Kachel zeigt zur Bildmitte.</p>
+<div class="sim">
+  <label><span>Öffnungsverhältnis: <b id="vN"></b></span><input type="range" id="N" min="2.8" max="10" step="0.1" value="4" /></label>
+  <label><span>Brennweite: <b id="vF"></b></span><input type="range" id="F" min="200" max="2500" step="10" value="800" /></label>
+  <label><span>Seeing (FWHM): <b id="vS"></b></span><input type="range" id="S" min="1" max="5" step="0.1" value="2.5" /></label>
+  <label><span>Sensor</span><select id="sensor">
+    <option value="23.5,15.6">APS-C (23,5 × 15,6 mm)</option>
+    <option value="36,24">Vollformat (36 × 24 mm)</option>
+    <option value="17.3,13">Four Thirds (17,3 × 13 mm)</option>
+  </select></label>
+  <label><span>Korrektor</span><select id="corr">
+    <option value="1">ohne (Newton pur)</option>
+    <option value="0">passend</option>
+    <option value="0.35">unterkorrigiert</option>
+    <option value="-0.35">überkorrigiert</option>
+  </select></label>
+  <label><span>Kachelbreite: <b id="vT"></b></span><input type="range" id="T" min="60" max="400" step="10" value="260" /></label>
+  <label><span>Dejustage x: <b id="vDX"></b></span><input type="range" id="DX" min="-8" max="8" step="0.5" value="0" /></label>
+  <label><span>Dejustage y: <b id="vDY"></b></span><input type="range" id="DY" min="-8" max="8" step="0.5" value="0" /></label>
+  <label><span>Pixelgröße: <b id="vP"></b></span><input type="range" id="P" min="2" max="9" step="0.01" value="3.76" /></label>
+  <label class="check"><input type="checkbox" id="pix" /> Pixelraster des Sensors zeigen</label>
+</div>
+<canvas class="stars" id="sim" width="640" height="640" aria-label="Simulierte Sterne an neun Stellen des Sensors"></canvas>
+<div class="readout" id="readout"></div>
+<div class="note"><p><b>Modell:</b> Koma dritter Ordnung eines Parabolspiegels, der Korrektor als Faktor auf die
+Feldkoma, die Dejustage als konstanter Komaanteil, Seeing als Gaußprofil. Beugung, Astigmatismus,
+Bildfeldwölbung und Fokusfehler sind weggelassen - echte Sterne sind entsprechend etwas komplizierter.</p></div>
+</section>
+
+<section class="card" id="script"><h2><span class="chapter-no">8.</span>Was StarAberrationDiagnostics daraus macht</h2>
+<p>Der PSF-Fit (Gauß oder Moffat) ist punktsymmetrisch und sieht den Fächer nicht. Das Script misst deshalb an den
+Pixeln jedes Sterns das <b>dritte Moment</b> m<sub>3</sub>, das das Licht im Fächer stark gewichtet und in dessen
+Richtung zeigt. An die Vektoren aller Sterne passt es genau das Modell aus Kapitel 6 an und erhält
+<b>k</b> (Stärke und Vorzeichen: unter- oder überkorrigiert) und den <b>komafreien Punkt P<sub>0</sub></b>
+(Kollimation). Die Einzelheiten stehen im <a href="./#coma">Handbuch, Kapitel 9</a>.</p>
+</section>
+<section class="card" id="seidel"><h2><span class="chapter-no">9.</span>Exkurs: Ordnungen und die Seidel'schen Fehler</h2>
+<p>Die „dritte Ordnung“ in den Kapiteln 3 und 7 stammt aus der klassischen Fehlertheorie. Man entwickelt den
+Versatz eines Strahls vom idealen Bildpunkt in eine Potenzreihe in zwei Größen: dem Abstand <i class="v">h</i> des
+Sterns von der Achse und der Zone <i class="v">ρ</i> der Öffnung, durch die der Strahl geht. Die <b>Ordnung</b>
+eines Terms ist die Summe der Exponenten.</p>
+<ul>
+  <li><b>1. Ordnung</b> - Terme linear in h oder ρ: Sie sind noch kein Fehler, sondern die ideale (paraxiale)
+      Abbildung mit Brennweite und Maßstab. Einziger „Fehler“ hier ist ein falscher Fokus: Er versetzt jede Zone
+      proportional zu ρ, der Stern wird zum Scheibchen.</li>
+  <li><b>2. Ordnung</b> - gibt es in einem rotationssymmetrischen System nicht. Dreht man h und ρ gemeinsam um,
+      muss sich auch der Versatz umkehren; deshalb bleiben nur ungerade Ordnungen übrig.</li>
+  <li><b>3. Ordnung</b> - die ersten echten Fehler, 1856 von Ludwig von Seidel beschrieben:</li>
+</ul>
+<figure>{{FIG_SEIDEL}}<figcaption>Abbildung 5 - Wohin die Strahlen aus sechs Zonen der Öffnung bei jedem der fünf Fehler fallen (blauer Kreis: idealer Bildpunkt). Die Verzeichnung lässt den Stern scharf und verbiegt stattdessen das Raster.</figcaption></figure>
+<div class="tbl"><table>
+<tr><th>Term</th><th>Fehler</th><th>Erkennungsmerkmal</th></tr>
+<tr><td>ρ³</td><td>sphärische Aberration</td><td>überall gleich, auch in der Bildmitte; Fokus „schwammig“</td></tr>
+<tr><td>h·ρ²</td><td><b>Koma</b></td><td>wächst linear zum Rand, einseitiger Fächer</td></tr>
+<tr><td>h²·ρ</td><td>Astigmatismus</td><td>wächst quadratisch zum Rand, Sterne zu Strichen, die sich beim Fokussieren um 90° drehen</td></tr>
+<tr><td>h²·ρ</td><td>Bildfeldwölbung</td><td>scharfe Mitte, gleichmäßig weicher Rand (<a href="./#tilt">Handbuch, Kapitel 7</a>)</td></tr>
+<tr><td>h³</td><td>Verzeichnung</td><td>Sterne scharf, aber an der falschen Stelle (kissen- oder tonnenförmig)</td></tr>
+</table></div>
+<p>Ein Parabolspiegel ist frei von sphärischer Aberration; von den übrigen dominiert bei ihm die Koma, weil sie als
+einziger Feldfehler nur <b>linear</b> mit h wächst. Die <b>5. Ordnung</b> (z. B. h·ρ⁴, h³·ρ²) wird erst bei sehr
+schnellen Spiegeln oder großen Feldwinkeln sichtbar; die exakt berechneten Strahlen in Abbildung 3 enthalten sie,
+die Formeln und der Simulator nicht.</p>
+<div class="note"><p><b>Andere Zählweise:</b> Manche Bücher zählen die Ordnung nicht am Strahlversatz, sondern an
+der Wellenfront, die eine Potenz höher ist. Dieselbe Koma heißt dort „Term 4. Ordnung“ oder <i>primäre Koma</i>.</p>
+<p><b>Wenn die Symmetrie bricht:</b> Ein verkippter oder dezentrierter Spiegel erlaubt Terme, die sonst verboten
+wären - etwa eine über das Feld <b>konstante Koma</b> (Kapitel 6) oder eine <b>quadratische Verzeichnung</b>. Genau
+diese quadratischen SIP-Terme vergleicht StarAberrationDiagnostics beim Meridian-Flip
+(<a href="./#sip">Handbuch, Kapitel 12</a>).</p></div>
+</section>
+
+  </main>
+<script>
+(function () {
+  "use strict";
+  var BG = [12, 20, 29], STAR = [255, 244, 226], RAYS = 40000;
+
+  function rng(seed) {
+    return function () {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  // Bins one star. cx, cy: coma vector in mm (direction away from the coma-free point, length h);
+  // returns {grid, n, peak} with peak = peak of a perfect star for the same binning.
+  function star(o, seed) {
+    var rand = rng(seed);
+    var h = Math.hypot(o.cx, o.cy);
+    var C = h / (16 * o.N * o.N) * 1000;                // µm
+    var ux = h > 0 ? o.cx / h : 1, uy = h > 0 ? o.cy / h : 0;
+    var sigma = o.seeing / 2.3548;
+    var b = o.pixel ? o.pitch : o.tile / 200;
+    var n = Math.max(1, Math.ceil(o.tile / b));
+    var half = n * b / 2;
+    var grid = new Float32Array(n * n);
+    for (var i = 0; i < RAYS; i++) {
+      var rho2 = rand(), phi = 2 * Math.PI * rand();
+      var dr = C * rho2 * (2 + Math.cos(2 * phi)) - C;   // centred on the flux centroid
+      var dt = C * rho2 * Math.sin(2 * phi);
+      var g1 = Math.sqrt(-2 * Math.log(1 - rand())), g2 = 2 * Math.PI * rand();
+      var x = dr * ux - dt * uy + sigma * g1 * Math.cos(g2);
+      var y = dr * uy + dt * ux + sigma * g1 * Math.sin(g2);
+      var ix = Math.floor((x + half) / b), iy = Math.floor((half - y) / b);
+      if (ix >= 0 && iy >= 0 && ix < n && iy < n) grid[iy * n + ix] += 1;
+    }
+    var peak = RAYS * Math.min(1, b * b / (2 * Math.PI * sigma * sigma));
+    return { grid: grid, n: n, peak: peak };
+  }
+
+  function paint(ctx, s, x, y, w, smooth) {
+    var off = document.createElement("canvas");
+    off.width = off.height = s.n;
+    var octx = off.getContext("2d"), img = octx.createImageData(s.n, s.n), a = 25;
+    for (var i = 0; i < s.n * s.n; i++) {
+      var v = Math.min(1, Math.asinh(a * s.grid[i] / s.peak) / Math.asinh(a));
+      for (var c = 0; c < 3; c++) img.data[4 * i + c] = BG[c] + (STAR[c] - BG[c]) * v;
+      img.data[4 * i + 3] = 255;
+    }
+    octx.putImageData(img, 0, 0);
+    ctx.imageSmoothingEnabled = smooth;
+    ctx.drawImage(off, x, y, w, w);
+  }
+
+  function setup(canvas, cssW, cssH) {
+    var r = window.devicePixelRatio || 1;
+    canvas.width = Math.round(cssW * r); canvas.height = Math.round(cssH * r);
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(r, 0, 0, r, 0, 0);
+    ctx.fillStyle = "#0c141d"; ctx.fillRect(0, 0, cssW, cssH);
+    ctx.font = "12px Segoe UI, Helvetica Neue, Arial, sans-serif";
+    return ctx;
+  }
+
+  function de(x, d) { return x.toFixed(d).replace(".", ","); }
+
+  // Figure 1: centre, half way, APS-C corner
+  (function () {
+    var cv = document.getElementById("fig1"), W = 640, H = 230, T = 196, gap = (W - 3 * T) / 4;
+    var ctx = setup(cv, W, H);
+    var seeing = 2.5 / 206265 * 800 * 1000;
+    [[0, "Bildmitte"], [7, "7 mm neben der Mitte"], [14.1, "14,1 mm (Ecke APS-C)"]].forEach(function (p, i) {
+      var x = gap + i * (T + gap);
+      paint(ctx, star({ cx: p[0], cy: 0, N: 4, seeing: seeing, tile: 220, pixel: false }, 11 + i), x, 8, T, true);
+      ctx.strokeStyle = "#2a3b4f"; ctx.strokeRect(x + 0.5, 8.5, T - 1, T - 1);
+      ctx.fillStyle = "#a8b6c8"; ctx.textAlign = "center"; ctx.fillText(p[1], x + T / 2, T + 24);
+    });
+  })();
+
+  // Simulator
+  var ids = ["N", "F", "S", "sensor", "corr", "T", "DX", "DY", "P", "pix"];
+  var el = {};
+  ids.forEach(function (id) { el[id] = document.getElementById(id); });
+
+  function draw() {
+    var N = +el.N.value, f = +el.F.value, seeingArc = +el.S.value, tile = +el.T.value;
+    var k = +el.corr.value, dx = +el.DX.value, dy = +el.DY.value, pitch = +el.P.value;
+    var sz = el.sensor.value.split(",").map(Number), pixel = el.pix.checked;
+    var seeing = seeingArc / 206265 * f * 1000;
+    document.getElementById("vN").textContent = "f/" + de(N, 1);
+    document.getElementById("vF").textContent = f + " mm";
+    document.getElementById("vS").textContent = de(seeingArc, 1) + "″ = " + de(seeing, 1) + " µm";
+    document.getElementById("vT").textContent = tile + " µm";
+    document.getElementById("vDX").textContent = de(dx, 1) + " mm";
+    document.getElementById("vDY").textContent = de(dy, 1) + " mm";
+    document.getElementById("vP").textContent = de(pitch, 2) + " µm";
+
+    var cv = document.getElementById("sim"), W = 640, gap = 8, T = (W - 4 * gap) / 3;
+    var ctx = setup(cv, W, W);
+    for (var row = 0; row < 3; row++) for (var col = 0; col < 3; col++) {
+      var px = (col - 1) * 0.45 * sz[0], py = (1 - row) * 0.45 * sz[1];
+      var cx = k * px - dx, cy = k * py - dy;           // coma = k·P + constant part of the decollimation
+      var x = gap + col * (T + gap), y = gap + row * (T + gap);
+      paint(ctx, star({ cx: cx, cy: cy, N: N, seeing: seeing, tile: tile, pixel: pixel, pitch: pitch }, 101 + 3 * row + col), x, y, T, !pixel);
+      ctx.strokeStyle = "#2a3b4f"; ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, y + 0.5, T - 1, T - 1);
+      ctx.fillStyle = "#a8b6c8"; ctx.textAlign = "left";
+      ctx.fillText(de(px, 1) + " / " + de(py, 1) + " mm", x + 7, y + 16);
+      var r = Math.hypot(px, py);
+      if (r > 0) {
+        var ax = x + T - 22, ay = y + T - 22, ex = -px / r, ey = py / r;
+        ctx.strokeStyle = ctx.fillStyle = "#64c7ff"; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(ax - ex * 9, ay - ey * 9); ctx.lineTo(ax + ex * 9, ay + ey * 9); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(ax + ex * 11, ay + ey * 11);
+        ctx.lineTo(ax + ex * 4 - ey * 4, ay + ey * 4 + ex * 4); ctx.lineTo(ax + ex * 4 + ey * 4, ay + ey * 4 - ex * 4);
+        ctx.fill();
+      }
+    }
+    // scale bar in the centre tile
+    var sb = 50, sx = gap + T + gap + 10, sy = gap + T + gap + T - 14, len = sb / tile * T;
+    ctx.strokeStyle = ctx.fillStyle = "#ffab5e"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx + len, sy); ctx.stroke();
+    ctx.textAlign = "left"; ctx.fillText(sb + " µm", sx + len + 6, sy + 4);
+
+    var hc = Math.hypot(sz[0], sz[1]) / 2;
+    var cc = Math.hypot(k * sz[0] / 2 - dx, k * sz[1] / 2 - dy);
+    var L = 3 * cc / (16 * N * N) * 1000;
+    var p0 = k === 0 ? (dx || dy ? "keiner - überall dieselbe Koma" : "überall (keine Koma)")
+                     : (dx || dy ? de(dx / k, 1) + " / " + de(dy / k, 1) + " mm" : "Bildmitte");
+    document.getElementById("readout").innerHTML =
+      "Ecke oben rechts (h = " + de(hc, 1) + " mm): Komalänge 3C = <b>" + de(L, 0) + " µm</b> = <b>" + de(L / pitch, 1) +
+      " px</b> = <b>" + de(L / 1000 / f * 206265, 1) + "″</b> · Seeing " + de(seeing, 1) + " µm" +
+      "<br>Komafreier Punkt P<sub>0</sub>: <b>" + p0 + "</b>";
+  }
+  ids.forEach(function (id) { el[id].addEventListener("input", draw); });
+  draw();
+})();
+</script>
+</body>
+</html>

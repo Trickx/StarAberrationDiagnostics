@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Typische Fehler eines Newton-Teleskops</title>
+  <meta name="description" content="Die typischen Fehler eines Newton-Teleskops in der Astrofotografie: Koma, Kollimation, Verkippung, Korrektorabstand, verspannte Optik, Mirror Flop, Thermik, Beugung und Streulicht - mit berechneten Sternbildern." />
+  {{STYLE}}
+  <style>
+    .back { font-size: 0.92rem; }
+    .gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0 6px 0; }
+    @media (max-width: 640px) { .gallery { grid-template-columns: repeat(2, 1fr); } }
+    .gallery figure { margin: 0; }
+    .gallery canvas { display: block; width: 100%; height: auto; border: 1px solid #2a3b4f; border-radius: 8px; background: #0c141d; }
+    .gallery figcaption { margin-top: 4px; font-size: 0.85rem; line-height: 1.3; }
+    .gallery figcaption b { display: block; }
+    .gallery.sensor canvas { image-rendering: pixelated; }
+    canvas.legend { display: block; width: 100%; max-width: 640px; height: auto; margin: 0 auto; border-radius: 10px; }
+    .modebar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin: 14px 0 4px 0; }
+    .seg { display: inline-flex; border: 1px solid #2a3b4f; border-radius: 6px; overflow: hidden; }
+    .seg button {
+      background: transparent; color: var(--accent); border: 0; padding: 5px 12px; font: inherit;
+      font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    }
+    .seg button + button { border-left: 1px solid #2a3b4f; }
+    .seg button[aria-pressed="true"] { background: #233244; color: var(--text); }
+    .seg button:hover { background: rgba(100, 199, 255, 0.12); }
+    .seeing { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--muted); }
+    .seeing b { color: var(--text); min-width: 8.5em; }
+    .seeing input { accent-color: var(--accent); width: 160px; }
+    .seeing input:disabled { opacity: 0.4; }
+    .scale-note { font-size: 0.88rem; margin-top: 4px; }
+    .badge {
+      display: inline-block; min-width: 1.35em; height: 1.35em; line-height: 1.35em; border-radius: 50%;
+      background: var(--warn); color: #0c141d; font-weight: 700; font-size: 0.82rem; text-align: center; margin-right: 4px;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <p class="back"><a href="./#handbook">← Handbuch StarAberrationDiagnostics</a></p>
+      <h1>Typische Fehler eines Newton-Teleskops</h1>
+      <p>Ein Newton ist einfach gebaut und liefert viel Öffnung fürs Geld - aber er hat mehr bewegliche und
+      empfindliche Teile als die meisten anderen Teleskope. Diese Seite geht die Fehler durch, die in der
+      Astrofotografie mit einem Newton typischerweise auftreten: woher sie kommen, wie sie in den Sternen aussehen,
+      was StarAberrationDiagnostics davon sieht und was dagegen hilft.</p>
+      <div class="note"><p><b>Gilt für</b> Newton-Teleskope und Dobsons mit Parabolspiegel, ohne oder mit
+      Komakorrektor, sowie Newton-Astrographen mit eingebautem Korrektor. Viele Punkte (Verkippung, Thermik,
+      Streulicht) betreffen andere Spiegelteleskope genauso.</p></div>
+    </section>
+
+    <section class="card toc">
+      <h2>Inhalt</h2>
+      <ol><li><a href="#layout">Aufbau: wo Fehler entstehen</a></li><li><a href="#gallery">Wie die Fehler aussehen</a></li><li><a href="#coma">Koma</a></li><li><a href="#collimation">Kollimation</a></li><li><a href="#tilt">Verkippung und Durchhang</a></li><li><a href="#spacing">Korrektorabstand und Bildfeldwölbung</a></li><li><a href="#pinched">Verspannte Optik</a></li><li><a href="#flop">Mirror Flop und bewegliche Teile</a></li><li><a href="#thermal">Thermik und Fokusdrift</a></li><li><a href="#diffraction">Beugung, Streulicht und Vignettierung</a></li><li><a href="#overview">Übersicht</a></li></ol>
+    </section>
+
+<section class="card" id="layout"><h2><span class="chapter-no">1.</span>Aufbau: wo Fehler entstehen</h2>
+<p>Das Licht fällt durch den offenen Tubus auf den parabolischen <b>Hauptspiegel</b>, wird zurückgeworfen und
+kurz vor dem Brennpunkt von einem ebenen <b>Fangspiegel</b> unter 45° zur Seite gelenkt. Dort sitzt der
+<b>Okularauszug</b>, bei der Fotografie meist mit einem <b>Komakorrektor</b> und der <b>Kamera</b>. Der Fangspiegel
+hängt an einer <b>Spinne</b> aus dünnen Streben mitten im Strahlengang.</p>
+<p>Der Fangspiegel sitzt nicht genau mittig auf der optischen Achse. Weil der Lichtkegel zum Brennpunkt hin
+schmaler wird, schneidet ihn der schräge Spiegel <b>unsymmetrisch</b>: Die Seite zum Hauptspiegel hin muss mehr Licht
+auffangen als die Seite zum Brennpunkt. Damit der ganze Kegel auf dem Spiegel landet, wird der Fangspiegel um den
+<b>Fangspiegeloffset</b> verschoben - vom Okularauszug weg und zum Hauptspiegel hin, in beide Richtungen um etwa</p>
+<div class="eq"><div>Offset ≈ m / (4 · N)</div><div><span class="c">m kleine Achse des Fangspiegels, N Öffnungszahl - z. B. 70 mm bei f/4: je etwa 4,4 mm</span></div></div>
+<p>Bei langsamen Newtons ist der Offset so klein, dass man ihn oft weglässt; bei schnellen ist er wichtig. Im
+Justierokular erscheint der Fangspiegel dadurch leicht versetzt (<a href="#collimation">Kapitel 4</a>) - das ist
+richtig so und kein Kollimationsfehler. Die Mittenmarkierung des Hauptspiegels muss trotzdem genau im Fadenkreuz
+liegen.</p>
+<figure>{{FIG_LAYOUT}}<figcaption>Abbildung 1 - Ein Newton f/4 im Schnitt, maßstäblich berechnet. Die Nummern markieren die Stellen, an denen die Fehler dieser Seite entstehen. Der Ausschnitt unten zeigt den Fangspiegel vergrößert: Die Mitte M des auftreffenden Lichtkegels liegt neben dem Punkt A, an dem die optische Achse den Spiegel trifft.</figcaption></figure>
+<ul>
+  <li><span class="badge">1</span><b>Hauptspiegel</b> - Kollimation, Klemmung in der Fassung, Mirror Flop, Auskühlung</li>
+  <li><span class="badge">2</span><b>Fangspiegel</b> - Offset, Kollimation, Verspannung (Astigmatismus), Tau</li>
+  <li><span class="badge">3</span><b>Spinne</b> - Beugungsspikes, doppelte Spikes bei verbogenen Streben</li>
+  <li><span class="badge">4</span><b>Okularauszug</b> - Verkippung, Durchhang, Spiel; ragt er in den Strahlengang, ein zusätzlicher Spike</li>
+  <li><span class="badge">5</span><b>Korrektor</b> - Abstand zum Sensor, Verkippung, Dezentrierung</li>
+  <li><span class="badge">6</span><b>Kamera</b> - Sensorverkippung</li>
+  <li><span class="badge">7</span><b>Tubus</b> - Tubusseeing, Längenänderung mit der Temperatur, Streulicht</li>
+</ul>
+</section>
+
+<section class="card" id="gallery"><h2><span class="chapter-no">2.</span>Wie die Fehler aussehen</h2>
+<p>Die folgenden Sternbilder sind nicht gezeichnet, sondern durch <b>Beugungsrechnung</b> entstanden: aus der Öffnung
+des Newtons - mit Fangspiegel, Spinne und dem jeweiligen Fehler - per Fourier-Transformation, so wie die Optik
+selbst das Bild formt. Die Helligkeit ist logarithmisch gestreckt, damit die schwachen Strukturen sichtbar werden.</p>
+<h3>Das Feld oben links: die Öffnung</h3>
+<p>Jede Kachel zeigt oben links die <b>Öffnung des Teleskops</b>, so wie man von vorn in den Tubus schaut. Aus genau
+diesem Feld wird der Stern daneben berechnet: Das Sternbild ist die Fourier-Transformation der Öffnung.</p>
+<ul>
+  <li><b>Die Form</b> zeigt, wo Licht durchkommt: Der helle Ring ist der Hauptspiegel, das Loch in der Mitte der
+      Schatten des Fangspiegels, das dunkle Kreuz die vier Streben der Spinne - von ihnen stammen die vier Spikes. Bei
+      der verbogenen Strebe steht eine Strebe schräg, beim hineinragenden Auszug fehlt am Rand ein Stück.</li>
+  <li><b>Die Farbe</b> zeigt den Fehler der Wellenfront: Grau heißt, die Welle ist dort perfekt; orange, dass sie
+      vorauseilt, blau, dass sie zurückbleibt. Volle Farbe entspricht 0,8 Wellenlängen. Welche Richtung „voraus“
+      heißt, ist Konvention - für den Stern zählt das Muster.</li>
+  <li><b>Das Muster</b> verrät den Fehler: Koma ist auf einer Seite orange, auf der anderen blau; Astigmatismus ist ein
+      Sattel mit zwei orangen und zwei blauen Vierteln; Trefoil hat drei Sektoren je Farbe, wie die drei
+      Spiegelklammern; sphärische Aberration bildet Ringe; Defokus wird nach außen gleichmäßig stärker.</li>
+</ul>
+<figure><canvas class="legend" id="pupil-legend" width="640" height="236" aria-label="Legende der Öffnungsfelder"></canvas><figcaption>Abbildung 2 - Links die Öffnung der Koma-Kachel vergrößert, rechts die Farbskala und die Muster der übrigen Fehler. Die Spike-Kacheln zeigen einen doppelt so großen Ausschnitt; ihr Feld erscheint deshalb kleiner. Im Sensormaßstab ist das Feld ausgeblendet.</figcaption></figure>
+<div class="modebar">
+  <div class="seg" role="group" aria-label="Maßstab">
+    <button type="button" data-mode="diff" aria-pressed="true">Beugungsmaßstab</button>
+    <button type="button" data-mode="sensor" aria-pressed="false">Sensormaßstab</button>
+  </div>
+  <label class="seeing">Seeing: <b id="seeing-v"></b><input type="range" id="seeing" min="0" max="4" step="0.1" value="2.5" /></label>
+</div>
+<div class="gallery" id="gallery-grid"></div>
+<p class="scale-note" id="scale-note"></p>
+<p>Im <b>Beugungsmaßstab</b> zeigen die Bilder den Stern so fein, wie die Optik ihn formt. Bei langer Belichtung verschmiert das Seeing
+die feinen Strukturen; was bleibt, ist die grobe Form: ein einseitiger Fächer (Koma), ein Kreuz oder Oval
+(Astigmatismus), ein Dreieck (Klemmung). Die Spikes überstehen das Seeing und sind bei hellen Sternen immer zu
+sehen.</p>
+<p>Der <b>Sensormaßstab</b> zeigt genau das: denselben Stern, wie ihn eine Kamera mit 3,76-µm-Pixeln an einem Newton
+mit 200 mm Öffnung und f/4 aufnimmt, nach dem Seeing. Die Fehler in der Galerie sind mit einer halben Wellenlänge und
+weniger moderat gewählt - und die meisten verschwinden dann fast völlig im Seeing. Nur der Defokus und, bei hellen
+Sternen, die Spikes bleiben deutlich. Ein einzelner Stern verrät also wenig; erst das <b>Muster über viele Sterne und
+das ganze Bildfeld</b> macht kleine Fehler messbar, und genau darauf stützt sich StarAberrationDiagnostics. Wie groß
+Koma am Bildrand tatsächlich wird, zeigt der Simulator auf der <a href="koma.html#simulator">Koma-Seite</a>; dort ist
+sie viel stärker als hier. Mit dem Seeing-Regler lässt sich ausprobieren, was bei sehr gutem Seeing sichtbar
+wird.</p>
+</section>
+
+<section class="card" id="coma"><h2><span class="chapter-no">3.</span>Koma</h2>
+<p>Der bekannteste Fehler des Newtons ist kein Baufehler, sondern eine Eigenschaft des Parabolspiegels: Abseits der
+optischen Achse werden Sterne zu kleinen Kometen. Die Koma wächst linear zum Bildrand und mit dem Quadrat der
+Öffnungszahl - ein f/4-Newton hat viermal so viel wie ein f/8. Ein <b>Komakorrektor</b> beseitigt sie, wenn er im
+richtigen Abstand sitzt.</p>
+<div class="note"><p>Wie Koma entsteht, wie stark sie ist und wie Korrektor und Dejustage sie verändern, erklärt eine
+eigene Seite mit Strahlengängen und Simulator: <a href="koma.html">Koma - wie sie entsteht</a>.</p></div>
+</section>
+
+<section class="card" id="collimation"><h2><span class="chapter-no">4.</span>Kollimation</h2>
+<p>Damit der Newton scharf abbildet, müssen die optischen Achsen von Hauptspiegel, Fangspiegel und Okularauszug
+zusammenfallen. Das Ausrichten heißt <b>Kollimation</b>. Ein Newton verliert sie leichter als andere Teleskope:
+beim Transport, beim Auf- und Abbauen, durch Temperaturwechsel, bei manchen sogar beim Schwenken.</p>
+<figure>{{FIG_CHESHIRE}}<figcaption>Abbildung 3 - Der Blick durch ein Cheshire-Justierokular. Justiert liegen alle Kreise konzentrisch und die Mittenmarkierung des Hauptspiegels im Fadenkreuz. Ein verkippter Hauptspiegel versetzt die Markierung; ein verkippter Fangspiegel versetzt das ganze Spiegelbild des Hauptspiegels.</figcaption></figure>
+<ul>
+  <li><b>Was im Bild passiert:</b> Die optische Achse - der komafreie Punkt - wandert aus der Bildmitte. Eine Seite des
+      Bildes zeigt deutlich mehr Koma als die andere; bei stärkerer Dejustage hat auch die Bildmitte Koma.</li>
+  <li><b>Nicht nur Koma:</b> Die Bildebene steht senkrecht zur tatsächlichen optischen Achse. Ist diese verkippt,
+      liegt die Bildebene schräg zum Sensor - eine Seite wird weicher, genau wie bei einer <b>Sensorverkippung</b>.
+      Beim Fangspiegel, der als ebener Spiegel selbst keine Fehler erzeugt, ist das sogar der Haupteffekt. Dazu
+      kommen ein einseitig verschobener <b>Astigmatismus</b> (erst bei grober Dejustage oder sehr schnellen Spiegeln
+      deutlich), eine <b>ungleichmäßige Korrektur</b> durch den schräg durchlaufenen Korrektor, manchmal mit
+      einseitigen Farbsäumen am Rand, und eine <b>einseitige Vignettierung</b> - Flats müssen deshalb immer zur
+      aktuellen Kollimation passen.</li>
+  <li><b>Wie empfindlich:</b> Die erlaubte Abweichung wächst mit der dritten Potenz der Öffnungszahl, weil die Koma
+      mit 1/N² wächst und das Beugungsscheibchen mit N. Ein f/4-Newton ist damit etwa achtmal so empfindlich wie ein
+      f/8.</li>
+  <li><b>Was das Script sieht:</b> Den komafreien Punkt P<sub>0</sub> und seinen Abstand zur Bildmitte
+      (<a href="./#coma">Handbuch, Kapitel 9</a>). Ab 15 % der halben Diagonale schlägt es eine Kollimation vor. Die
+      Bildfeldverkippung erscheint als ganz normale Verkippung (<a href="./#tilt">Kapitel 7</a>); das Script kann sie
+      nicht von einem schief sitzenden Sensor unterscheiden.</li>
+  <li><b>Reihenfolge:</b> Liegt P<sub>0</sub> deutlich neben der Mitte und meldet das Script zugleich eine
+      Verkippung, <b>zuerst kollimieren</b> und neu messen. Sonst gleicht man am Tilt-Adapter einen verkippten Spiegel
+      aus - und nach der nächsten Kollimation stimmt der Adapter nicht mehr.</li>
+  <li><b>Abhilfe:</b> Kollimieren mit Cheshire, Laser (der Laser selbst muss justiert sein) oder einer Justierkamera,
+      in der Beobachtungsposition und bei Nachttemperatur. Eine Mittenmarkierung auf dem Hauptspiegel ist
+      unverzichtbar.</li>
+</ul>
+</section>
+
+<section class="card" id="tilt"><h2><span class="chapter-no">5.</span>Verkippung und Durchhang</h2>
+<p>Der Okularauszug eines Newtons sitzt seitlich am Tubus und trägt die ganze Kamera samt Korrektor, Filterrad und
+Off-Axis-Guider - oft über ein Kilogramm an einem Hebel quer zum Tubus. Gibt der Auszug nach, kippt der Sensor
+gegen die Bildebene: Eine Bildseite ist scharf, die gegenüberliegende weich.</p>
+<ul>
+  <li><b>Ursachen:</b> Spiel im Auszug, eine zu schwach angezogene Klemmung, ein dünnes Tubusblech, das sich unter der
+      Last verformt, verkippte Adapter oder ein schief eingebauter Sensor - oder eine Dejustage, die die Bildebene
+      kippt (<a href="#collimation">Kapitel 4</a>).</li>
+  <li><b>Typisch für den Newton:</b> Weil der Auszug quer zum Tubus sitzt, wirkt die Schwerkraft je nach
+      Himmelsrichtung anders - die Verkippung kann sich beim Schwenken und beim Meridian-Flip ändern.</li>
+  <li><b>Was das Script sieht:</b> Den FWHM-Verlauf über das Bildfeld, Kippachse und Kippwinkel
+      (<a href="./#tilt">Handbuch, Kapitel 7</a>). Ob sich die Verkippung beim Flip ändert, zeigt die Serienanalyse
+      (<a href="./#series">Kapitel 11</a>): Wechselt sie mit der Seite, ist sie mechanisch; bleibt sie, sitzt sie fest im
+      optischen Zug.</li>
+  <li><b>Abhilfe:</b> Zuerst die Mechanik - Auszug spielfrei einstellen, Klemmung anziehen, Schraubadapter statt
+      Klemmungen, ein Verstärkungsring im Tubus. Erst wenn die Verkippung auf beiden Seiten des Flips gleich bleibt,
+      lohnt sich ein Tilt-Adapter.</li>
+</ul>
+</section>
+
+<section class="card" id="spacing"><h2><span class="chapter-no">6.</span>Korrektorabstand und Bildfeldwölbung</h2>
+<p>Ein Komakorrektor ist für einen bestimmten Abstand zum Sensor gerechnet, typisch 55 mm, bei manchen Modellen
+abhängig von der Öffnungszahl. Schon ein bis zwei Millimeter Abweichung lassen am Rand Koma übrig - unterkorrigiert
+zeigen die Fächer nach außen, überkorrigiert nach innen. Dazu kommt, dass die Sterne am Rand radial oder tangential
+in die Länge gezogen werden.</p>
+<ul>
+  <li><b>Typische Ursachen:</b> Filter im Strahlengang (sie verlängern den Weg um etwa ein Drittel ihrer Dicke),
+      vergessene oder doppelte Distanzringe, der falsche Wert aus der Anleitung.</li>
+  <li><b>Was das Script sieht:</b> Das radiale/tangentiale Muster am Rand (<a href="./#spacing">Handbuch, Kapitel 8</a>)
+      und die Koma k (<a href="./#coma">Kapitel 9</a>). Wie Unter- und Überkorrektur aussehen, zeigt der Simulator auf
+      der <a href="koma.html#corrector">Koma-Seite</a>.</li>
+  <li><b>Bildfeldwölbung:</b> Ein reiner Komakorrektor ebnet das Feld nicht unbedingt; bei großen Sensoren bleibt ein
+      gleichmäßig weicher Rand, den die FWHM²-Fläche als Wölbung ausweist.</li>
+  <li><b>Abhilfe:</b> Abstand nachmessen und in kleinen Schritten (0,5 mm) verändern, nach jedem Schritt neu messen.</li>
+</ul>
+</section>
+
+<section class="card" id="pinched"><h2><span class="chapter-no">7.</span>Verspannte Optik</h2>
+<p>Spiegel sind dünne Glasscheiben, deren Oberfläche auf einen Bruchteil der Lichtwellenlänge genau sein muss.
+Schon geringe Kräfte verbiegen sie messbar.</p>
+<ul>
+  <li><b>Geklemmter Hauptspiegel:</b> Sind die Spiegelklammern zu fest angezogen, drücken sie an drei Stellen auf den
+      Spiegel. Das Ergebnis ist ein dreieckiger Stern mit drei oder sechs Ausläufern (<i>Trefoil</i>, Abbildung im
+      Kapitel 2). Bei Kälte wird es oft schlimmer, weil die Metallfassung stärker schrumpft als das Glas. Die Klammern
+      sollen den Spiegel nur sichern, nicht klemmen - ein Blatt Papier sollte noch dazwischen passen.</li>
+  <li><b>Verspannter Fangspiegel:</b> Ein zu fest verklebter oder geschraubter Fangspiegel, oder einer mit schlechter
+      Planität, erzeugt <b>Astigmatismus</b>. Der Stern wird zum Kreuz oder Oval, das sich beim Durchfokussieren um 90°
+      dreht - und zwar <b>überall im Bildfeld gleich</b>, auch in der Mitte.</li>
+  <li><b>Was das Script sieht:</b> Eine Verspannung ist kein Feldfehler und erzeugt deshalb kein Muster über das Bild.
+      Astigmatismus kann aber, wenn der Fokus nicht genau sitzt, eine gemeinsame Elongation aller Sterne erzeugen - wie
+      ein Nachführfehler (<a href="./#tracking">Handbuch, Kapitel 5</a>). Ändert sich deren Richtung um 90°, wenn man
+      ein wenig vor und hinter den Fokus geht, ist es die Optik und nicht die Montierung.</li>
+</ul>
+</section>
+
+<section class="card" id="flop"><h2><span class="chapter-no">8.</span>Mirror Flop und bewegliche Teile</h2>
+<p>Der Hauptspiegel liegt in einer Fassung, die ihn trägt, ohne ihn zu verspannen - er hat also etwas Spiel. Wenn
+der Tubus seine Lage zur Schwerkraft ändert, vor allem beim <b>Meridian-Flip</b>, kann der Spiegel um Bruchteile eines
+Millimeters rutschen oder kippen: der <b>Mirror Flop</b>. Dasselbe gilt für einen locker sitzenden Korrektor oder einen
+Fangspiegel mit Spiel in der Halterung.</p>
+<ul>
+  <li><b>Was im Bild passiert:</b> Die Kollimation ist auf beiden Seiten des Flips verschieden: Der komafreie Punkt
+      springt, oft auch die Verkippung.</li>
+  <li><b>Was das Script sieht:</b> Die Serienanalyse vergleicht den komafreien Punkt, die Verkippung und die
+      Plate-Solve-Verzeichnung beider Seiten (<a href="./#series">Handbuch, Kapitel 11</a> und
+      <a href="./#sip">11</a>). Springen sie beim Flip, bewegt sich etwas im optischen Zug.</li>
+  <li><b>Abhilfe:</b> Seitliche Spiegelauflage prüfen (Schlinge oder Auflagepunkte), Klammern bis knapp an den Spiegel,
+      bei manchen Fassungen eine Spiegelarretierung. Den Fangspiegelhalter und den Korrektor auf Spiel prüfen.</li>
+</ul>
+</section>
+
+<section class="card" id="thermal"><h2><span class="chapter-no">9.</span>Thermik und Fokusdrift</h2>
+<p>Ein offener Tubus mit einem dicken Glasspiegel am Ende reagiert stark auf Temperatur.</p>
+<ul>
+  <li><b>Nicht ausgekühlter Spiegel:</b> Ist der Spiegel wärmer als die Luft, steigt über ihm eine warme Grenzschicht
+      auf, die wie schlechtes Seeing wirkt - nur direkt im Teleskop. Sterne werden aufgebläht und flackern. Ein
+      Lüfter hinter dem Spiegel und genug Zeit zum Auskühlen helfen; als Faustregel braucht ein 200-mm-Spiegel mit
+      normaler Dicke ohne Lüfter ein bis zwei Stunden.</li>
+  <li><b>Tubusseeing:</b> Warme Luft, die an der Tubuswand aufsteigt, oder die Hand und der Körper vor der Öffnung
+      erzeugen Schlieren im Strahlengang - oft einseitig.</li>
+  <li><b>Fokusdrift:</b> Der Tubus schrumpft, wenn es kälter wird, und damit wandert der Fokus. Bei einem schnellen
+      Newton ist die kritische Fokuszone - der Bereich, in dem der Stern noch scharf ist - nur wenige
+      Hundertstelmillimeter tief:</li>
+</ul>
+<div class="eq"><div>kritische Fokuszone ≈ ± 2,44 · λ · N²&nbsp;&nbsp;&nbsp; (λ = 0,55 µm)</div><div>Längenänderung ≈ α · L · ΔT&nbsp;&nbsp;&nbsp; <span class="c">α Ausdehnungskoeffizient, L ≈ Brennweite</span></div></div>
+{{TABLE_DRIFT}}
+<p>Bei einem Aluminiumtubus mit f/4 verschiebt also schon <b>1 °C</b> den Fokus um fast die halbe Toleranz. Carbon
+dehnt sich kaum aus, ganz verschwindet die Drift aber auch dort nicht, weil der Spiegel und seine Fassung mitwirken.
+Die Werte sind deshalb Größenordnungen.</p>
+<ul>
+  <li><b>Was das Script sieht:</b> Eine defokussierte Aufnahme an einer zu weichen Bildmitte (Defokus-Verdacht,
+      <a href="./#tilt">Handbuch, Kapitel 7</a>), und in einer Serie eine FWHM, die mit der Zeit driftet
+      (<a href="./#series">Kapitel 11</a>).</li>
+  <li><b>Abhilfe:</b> Autofokus nach Temperatur (z. B. alle 1 - 2 °C) oder nach Zeit, ein elektrischer Fokussierer, ein
+      Carbontubus.</li>
+</ul>
+</section>
+
+<section class="card" id="diffraction"><h2><span class="chapter-no">10.</span>Beugung, Streulicht und Vignettierung</h2>
+<ul>
+  <li><b>Beugungsspikes:</b> Die Streben der Spinne beugen das Licht; jeder helle Stern bekommt vier Strahlen. Das ist
+      kein Fehler, sondern ein Markenzeichen des Newtons. Ein Fehler ist es, wenn die Spikes <b>doppelt</b> oder
+      <b>aufgefächert</b> sind: Dann ist eine Strebe verbogen oder die gegenüberliegenden Streben liegen nicht genau in
+      einer Linie.</li>
+  <li><b>Zusätzlicher Spike:</b> Ragt das Auszugsrohr oder ein Adapter in den Lichtweg, erzeugt seine Kante einen
+      einzelnen Spike quer zu ihr, oft nur auf einer Seite der hellen Sterne. Abhilfe: Auszug so weit ausfahren, dass
+      nichts in den Tubus ragt, gegebenenfalls mit einer Verlängerung.</li>
+  <li><b>Streulicht und Reflexe:</b> Ein blanker Tubus, eine fehlende Taukappe oder bei Gitterrohr-Dobsons ein fehlender
+      Lichtschutz lassen Streulicht auf den Sensor. Flocking-Folie gegenüber dem Auszug, eine Taukappe und
+      geschwärzte Kanten helfen. Ringe um helle Sterne stammen oft von Filtern oder dem Korrektor.</li>
+  <li><b>Vignettierung:</b> Fangspiegel und Auszugsrohr beschneiden den Lichtkegel für den Bildrand. Das kostet am Rand
+      Helligkeit, verändert aber die Sternform nicht. Flatfields gleichen sie aus.</li>
+  <li><b>Tau:</b> Der Fangspiegel liegt offen am Tubusende und beschlägt als Erstes. Die Sterne bekommen einen
+      wachsenden Halo, das Bild verliert Kontrast. Eine Fangspiegelheizung hilft.</li>
+</ul>
+<div class="note"><p>Diese Effekte misst StarAberrationDiagnostics nicht direkt: Gesättigte Sterne lässt es bei der
+Asymmetriemessung aus, und Spikes, Halos und Vignettierung verändern den PSF-Fit schwacher Sterne kaum.</p></div>
+</section>
+
+<section class="card" id="overview"><h2><span class="chapter-no">11.</span>Übersicht</h2>
+<div class="tbl"><table>
+<tr><th>Fehler</th><th>So sieht er aus</th><th>Im Script</th><th>Erste Maßnahme</th></tr>
+<tr><td><a href="koma.html">Koma</a></td><td>Fächer zum Rand hin, wächst linear</td><td>k, P<sub>0</sub> (Kap. 9)</td><td>Komakorrektor</td></tr>
+<tr><td>Dejustage</td><td>Koma einseitig stärker, auch in der Mitte; oft eine Seite weicher</td><td>P<sub>0</sub> außerhalb der Mitte, evtl. Verkippung</td><td>kollimieren, vor der Verkippung</td></tr>
+<tr><td>Verkippung</td><td>eine Seite scharf, die andere weich</td><td>Kippachse, -winkel (Kap. 7)</td><td>Mechanik, dann Tilt-Adapter</td></tr>
+<tr><td>Korrektorabstand</td><td>Restkoma, radiale oder tangentiale Sterne am Rand</td><td>eps_rad (Kap. 8), k</td><td>Abstand in 0,5-mm-Schritten</td></tr>
+<tr><td>Bildfeldwölbung</td><td>Rand rundum weich</td><td>FWHM²-Fläche (Kap. 7)</td><td>Flattener, kleinerer Sensor</td></tr>
+<tr><td>Hauptspiegel geklemmt</td><td>dreieckige Sterne</td><td>-</td><td>Klammern lösen</td></tr>
+<tr><td>Fangspiegel verspannt</td><td>Kreuz/Oval, dreht beim Fokussieren um 90°</td><td>evtl. gemeinsame Elongation</td><td>Halterung entspannen</td></tr>
+<tr><td>Mirror Flop</td><td>Kollimation ändert sich beim Flip</td><td>Serie: P<sub>0</sub>, Verkippung, SIP</td><td>Spiegelauflage prüfen</td></tr>
+<tr><td>Fokusdrift</td><td>Sterne werden im Lauf der Nacht größer</td><td>Defokus-Verdacht, Drift</td><td>Autofokus nach Temperatur</td></tr>
+<tr><td>Spiegel nicht ausgekühlt</td><td>aufgeblähte, flackernde Sterne</td><td>große FWHM</td><td>Lüfter, Zeit</td></tr>
+<tr><td>Spinne verbogen</td><td>doppelte Spikes</td><td>-</td><td>Streben ausrichten</td></tr>
+<tr><td>Auszug ragt hinein</td><td>zusätzlicher Spike</td><td>-</td><td>Auszug weiter ausfahren</td></tr>
+</table></div>
+<p>Die Reihenfolge, in der man die Fehler angeht, folgt dem <a href="./#assessment">Handbuch, Kapitel 10</a>: erst
+Fokus, dann Nachführung, Verkippung, Kollimation, Abstand - weil sich die Fehler gegenseitig überdecken. Ausnahme:
+Bei deutlich verschobenem komafreiem Punkt zuerst kollimieren, weil die Dejustage selbst eine Verkippung erzeugt
+(<a href="#collimation">Kapitel 4</a>).</p>
+</section>
+  </main>
+<script>
+(function () {
+  "use strict";
+  var NP = 256, R = 32, CROP = 96, OBS = 0.25, DEC = 3.0, REF = 0;
+
+  function fft(re, im, n) {                      // in-place radix-2
+    for (var i = 1, j = 0; i < n; i++) {
+      var bit = n >> 1;
+      for (; j & bit; bit >>= 1) j ^= bit;
+      j ^= bit;
+      if (i < j) { var t = re[i]; re[i] = re[j]; re[j] = t; t = im[i]; im[i] = im[j]; im[j] = t; }
+    }
+    for (var len = 2; len <= n; len <<= 1) {
+      var a = -2 * Math.PI / len, wr = Math.cos(a), wi = Math.sin(a);
+      for (var s = 0; s < n; s += len) {
+        var cr = 1, ci = 0;
+        for (var k = 0; k < len / 2; k++) {
+          var p = s + k, q = p + len / 2;
+          var xr = re[q] * cr - im[q] * ci, xi = re[q] * ci + im[q] * cr;
+          re[q] = re[p] - xr; im[q] = im[p] - xi; re[p] += xr; im[p] += xi;
+          var ncr = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = ncr;
+        }
+      }
+    }
+  }
+
+  function fft2(re, im) {
+    var rr = new Float64Array(NP), ii = new Float64Array(NP), x, y;
+    for (y = 0; y < NP; y++) {
+      for (x = 0; x < NP; x++) { rr[x] = re[y * NP + x]; ii[x] = im[y * NP + x]; }
+      fft(rr, ii, NP);
+      for (x = 0; x < NP; x++) { re[y * NP + x] = rr[x]; im[y * NP + x] = ii[x]; }
+    }
+    for (x = 0; x < NP; x++) {
+      for (y = 0; y < NP; y++) { rr[y] = re[y * NP + x]; ii[y] = im[y * NP + x]; }
+      fft(rr, ii, NP);
+      for (y = 0; y < NP; y++) { re[y * NP + x] = rr[y]; im[y * NP + x] = ii[y]; }
+    }
+  }
+
+  function distToRay(x, y, ang) {                // distance of (x, y) to the half line from 0 at angle ang
+    var c = Math.cos(ang), s = Math.sin(ang), t = x * c + y * s;
+    return t < 0 ? Infinity : Math.abs(-x * s + y * c);
+  }
+
+  // Aperture of the Newtonian: amplitude (0/1) and wavefront error W in waves
+  function aperture(o) {
+    var amp = new Float64Array(NP * NP), w = new Float64Array(NP * NP), vw = 1.1 / R;
+    var vanes = o.vanes || [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2];
+    for (var j = 0; j < NP; j++) for (var i = 0; i < NP; i++) {
+      var x = (i - NP / 2) / R, y = (NP / 2 - j) / R, rho = Math.hypot(x, y);
+      if (rho > 1 || rho < OBS) continue;
+      var blocked = false;
+      for (var v = 0; v < vanes.length; v++) if (distToRay(x, y, vanes[v]) < vw) blocked = true;
+      if (o.drawtube && (x + y) / Math.SQRT2 > 0.74 && Math.abs(x - y) / Math.SQRT2 < 0.22) blocked = true;
+      if (blocked) continue;
+      amp[j * NP + i] = 1;
+      w[j * NP + i] = o.W ? o.W(rho, Math.atan2(y, x)) : 0;
+    }
+    return { amp: amp, w: w };
+  }
+
+  // Optics behind the gallery: 200 mm f/4 Newtonian, green light, a common CMOS pixel
+  var LAM = 0.55, NFOC = 4, PITCH = 3.76, TILE = 25;
+  var PSFPX = LAM * NFOC * 2 * R / NP;           // µm per sample of the computed star image
+
+  function psf(ap) {                             // intensity on the full grid, star centred at NP/2
+    var re = new Float64Array(NP * NP), im = new Float64Array(NP * NP);
+    for (var j = 0; j < NP; j++) for (var i = 0; i < NP; i++) {
+      var k = j * NP + i, sgn = (i + j) & 1 ? -1 : 1, ph = 2 * Math.PI * ap.w[k];
+      re[k] = sgn * ap.amp[k] * Math.cos(ph); im[k] = sgn * ap.amp[k] * Math.sin(ph);
+    }
+    fft2(re, im);
+    for (var q = 0; q < NP * NP; q++) re[q] = re[q] * re[q] + im[q] * im[q];
+    return re;
+  }
+
+  function blur(src, sigma) {                    // separable Gaussian, periodic edges
+    if (sigma < 0.3) return src;
+    var r = Math.ceil(3 * sigma), ker = [], sum = 0, i, x, y, t, acc;
+    for (i = -r; i <= r; i++) { ker.push(Math.exp(-i * i / (2 * sigma * sigma))); sum += ker[ker.length - 1]; }
+    for (i = 0; i < ker.length; i++) ker[i] /= sum;
+    var tmp = new Float64Array(NP * NP), out = new Float64Array(NP * NP);
+    for (y = 0; y < NP; y++) for (x = 0; x < NP; x++) {
+      for (acc = 0, t = -r; t <= r; t++) acc += ker[t + r] * src[y * NP + ((x + t + NP) % NP)];
+      tmp[y * NP + x] = acc;
+    }
+    for (y = 0; y < NP; y++) for (x = 0; x < NP; x++) {
+      for (acc = 0, t = -r; t <= r; t++) acc += ker[t + r] * tmp[((y + t + NP) % NP) * NP + x];
+      out[y * NP + x] = acc;
+    }
+    return out;
+  }
+
+  function toSensor(full, seeing) {              // seeing FWHM in µm, then binning into camera pixels
+    var b = blur(full, seeing / 2.3548 / PSFPX), out = new Float64Array(TILE * TILE), s = PITCH / PSFPX;
+    for (var j = 0; j < NP; j++) {
+      var py = Math.floor((j - NP / 2) / s + TILE / 2);
+      if (py < 0 || py >= TILE) continue;
+      for (var i = 0; i < NP; i++) {
+        var px = Math.floor((i - NP / 2) / s + TILE / 2);
+        if (px >= 0 && px < TILE) out[py * TILE + px] += b[j * NP + i];
+      }
+    }
+    return out;
+  }
+
+  function crop(full, n) {
+    var out = new Float64Array(n * n), o = (NP - n) / 2;
+    for (var y = 0; y < n; y++) for (var x = 0; x < n; x++) out[y * n + x] = full[(y + o) * NP + (x + o)];
+    return out;
+  }
+
+  function maxOf(a) { var m = 0; for (var i = 0; i < a.length; i++) if (a[i] > m) m = a[i]; return m; }
+
+  function paint(canvas, data, n, ref, dec) {
+    canvas.width = canvas.height = n;
+    var ctx = canvas.getContext("2d"), img = ctx.createImageData(n, n), bg = [12, 20, 29], st = [255, 244, 226];
+    for (var i = 0; i < n * n; i++) {
+      var v = Math.min(1, Math.max(0, Math.log10(1 + Math.pow(10, dec) * data[i] / ref) / dec));
+      for (var c = 0; c < 3; c++) img.data[4 * i + c] = bg[c] + (st[c] - bg[c]) * v;
+      img.data[4 * i + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    return ctx;
+  }
+
+  function waveColor(a, w) {                     // grey = no error, orange = ahead, blue = behind; full at 0.8 waves
+    var wv = Math.max(-1, Math.min(1, w / 0.8));
+    return !a ? [12, 20, 29] : wv > 0 ? [168 + 87 * wv, 182 - 11 * wv, 200 - 106 * wv] : [168 + 68 * wv, 182 - 17 * wv, 200 - 55 * wv];
+  }
+
+  function pupilImage(ap, S) {                   // the aperture as an S x S image
+    var off = document.createElement("canvas"); off.width = off.height = S;
+    var octx = off.getContext("2d"), img = octx.createImageData(S, S), step = 2 * R / S;
+    for (var y = 0; y < S; y++) for (var x = 0; x < S; x++) {
+      var i0 = Math.min(NP - 1, Math.floor(NP / 2 - R + (x + 0.5) * step)), j0 = Math.min(NP - 1, Math.floor(NP / 2 - R + (y + 0.5) * step));
+      var k = j0 * NP + i0, col = waveColor(ap.amp[k], ap.w[k]), q = 4 * (y * S + x);
+      img.data[q] = col[0]; img.data[q + 1] = col[1]; img.data[q + 2] = col[2]; img.data[q + 3] = 255;
+    }
+    octx.putImageData(img, 0, 0);
+    return off;
+  }
+
+  function inset(ctx, ap) {
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(pupilImage(ap, 22), 3, 3);
+  }
+
+  function legend(items) {
+    var cv = document.getElementById("pupil-legend"), W = 640, H = 236, r = window.devicePixelRatio || 1;
+    cv.width = W * r; cv.height = H * r;
+    var ctx = cv.getContext("2d");
+    ctx.setTransform(r, 0, 0, r, 0, 0);
+    ctx.fillStyle = "#0c141d"; ctx.fillRect(0, 0, W, H);
+    ctx.font = "12px Segoe UI, Helvetica Neue, Arial, sans-serif";
+    // large aperture with labels
+    var cx = 118, cy = 118, rad = 96;
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(pupilImage(items[1].ap, 2 * rad), cx - rad, cy - rad, 2 * rad, 2 * rad);
+    function label(x1, y1, x2, y2, txt) {
+      ctx.strokeStyle = "#a8b6c8"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(x1, y1, 2.5, 0, 2 * Math.PI); ctx.fillStyle = "#e7edf5"; ctx.fill();
+      ctx.fillStyle = "#e7edf5"; ctx.textAlign = "left"; ctx.fillText(txt, x2 + 5, y2 + 4);
+    }
+    label(cx + 0.62 * rad, cy - 0.62 * rad, 236, 28, "Hauptspiegel");
+    label(cx + 6, cy - 8, 236, 80, "Schatten des Fangspiegels");
+    label(cx + 0.55 * rad, cy + 1, 236, 132, "Strebe der Spinne");
+    label(cx + 0.7 * rad, cy + 0.4 * rad, 236, 176, "Wellenfront zurück (blau)");
+    label(cx - 0.7 * rad, cy + 0.45 * rad, 236, 196, "Wellenfront voraus (orange)");
+    // colour bar
+    var bx = 420, by = 26, bw = 190, bh = 12;
+    for (var i = 0; i < bw; i++) {
+      var col = waveColor(1, -0.8 + 1.6 * i / (bw - 1));
+      ctx.fillStyle = "rgb(" + col.map(Math.round).join(",") + ")"; ctx.fillRect(bx + i, by, 1, bh);
+    }
+    ctx.fillStyle = "#a8b6c8"; ctx.textAlign = "center";
+    ctx.fillText("−0,8 λ", bx, by + bh + 15); ctx.fillText("0", bx + bw / 2, by + bh + 15); ctx.fillText("+0,8 λ", bx + bw, by + bh + 15);
+    ctx.fillStyle = "#e7edf5"; ctx.fillText("Fehler der Wellenfront", bx + bw / 2, by - 8);
+    // small apertures of the other errors
+    [[1, "Koma"], [2, "Astigm."], [3, "Trefoil"], [4, "Sphär."], [5, "Defokus"]].forEach(function (e, n) {
+      var x = 400 + n * 52, y = 132, rr = 21;
+      ctx.drawImage(pupilImage(items[e[0]].ap, 2 * rr), x - rr, y - rr, 2 * rr, 2 * rr);
+      ctx.fillStyle = "#a8b6c8"; ctx.textAlign = "center"; ctx.fillText(e[1], x, y + rr + 16);
+    });
+    ctx.fillStyle = "#e7edf5"; ctx.textAlign = "left"; ctx.fillText("Muster der Fehler", 392, 96);
+  }
+
+  var tiles = [
+    ["Ideal", "Beugungsscheibchen, vier Spikes von der Spinne", {}],
+    ["Koma", "abseits der Achse oder dejustiert - <a href=\"koma.html\">eigene Seite</a>",
+      { W: function (r, p) { return 0.6 * (3 * r * r * r - 2 * r) * Math.cos(p); } }],
+    ["Astigmatismus", "Fangspiegel verspannt oder nicht plan",
+      { W: function (r, p) { return 0.45 * r * r * Math.cos(2 * p); } }],
+    ["Trefoil", "Hauptspiegel von drei Klammern geklemmt",
+      { W: function (r, p) { return 0.25 * r * r * r * Math.cos(3 * p); } }],
+    ["Sphärische Aberration", "Schliff, oder Spiegel nicht ausgekühlt",
+      { W: function (r) { return 0.4 * (6 * Math.pow(r, 4) - 6 * r * r + 1); } }],
+    ["Defokus", "Fokusdrift durch Temperatur; der Schatten von Fangspiegel und Spinne wird sichtbar",
+      { W: function (r) { return 2.0 * r * r; } }],
+    ["Verbogene Strebe", "eine Strebe um einige Grad verdreht: der senkrechte Spike teilt sich (im Beugungsmaßstab doppelter Ausschnitt; gestreckt wie ein heller Stern)",
+      { vanes: [0.1, Math.PI / 2, Math.PI, 3 * Math.PI / 2], crop: 192, dec: 5 }],
+    ["Auszug ragt hinein", "die Kante des Auszugsrohrs erzeugt einen zusätzlichen, hier diagonalen Spike (im Beugungsmaßstab doppelter Ausschnitt; gestreckt wie ein heller Stern)",
+      { drawtube: true, crop: 192, dec: 5 }]
+  ];
+
+  function de(x, d) { return x.toFixed(d).replace(".", ","); }
+
+  var grid = document.getElementById("gallery-grid"), items = [];
+  tiles.forEach(function (t) {
+    var fig = document.createElement("figure"), cv = document.createElement("canvas"), cap = document.createElement("figcaption");
+    cv.setAttribute("aria-label", "Berechnetes Sternbild: " + t[0]);
+    cap.innerHTML = "<b>" + t[0] + "</b>" + t[1];
+    fig.appendChild(cv); fig.appendChild(cap); grid.appendChild(fig);
+    var ap = aperture(t[2]);
+    items.push({ cv: cv, ap: ap, full: psf(ap), crop: t[2].crop || CROP, dec: t[2].dec || DEC });
+  });
+  var refDiff = maxOf(items[0].full);
+  legend(items);            // the ideal star sets the brightness scale
+
+  var mode = "diff", seeingEl = document.getElementById("seeing"), noteEl = document.getElementById("scale-note");
+  function draw() {
+    var arc = +seeingEl.value, seeing = arc / 206265 * NFOC * 200 * 1000;
+    document.getElementById("seeing-v").textContent = de(arc, 1) + "″ = " + de(seeing, 1) + " µm";
+    seeingEl.disabled = mode !== "sensor";
+    grid.classList.toggle("sensor", mode === "sensor");
+    if (mode === "diff") {
+      items.forEach(function (it) { inset(paint(it.cv, crop(it.full, it.crop), it.crop, refDiff, it.dec), it.ap); });
+      noteEl.innerHTML = "<b>Beugungsmaßstab:</b> eine Kachel zeigt " + de(CROP * PSFPX, 0) + " µm, also etwa " +
+        de(CROP * PSFPX / PITCH, 0) + " Pixel der Kamera; ohne Seeing.";
+    } else {
+      var sens = items.map(function (it) { return toSensor(it.full, seeing); }), ref = maxOf(sens[0]);
+      items.forEach(function (it, i) { paint(it.cv, sens[i], TILE, ref, Math.min(it.dec, 3.6)); });
+      noteEl.innerHTML = "<b>Sensormaßstab:</b> eine Kachel zeigt " + TILE + " × " + TILE + " Pixel à " + de(PITCH, 2) +
+        " µm (" + de(TILE * PITCH, 0) + " µm) eines Newtons mit 200 mm Öffnung bei f/4, mit " + de(arc, 1) + "″ Seeing.";
+    }
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".seg button"), function (btn) {
+    btn.addEventListener("click", function () {
+      mode = btn.getAttribute("data-mode");
+      Array.prototype.forEach.call(document.querySelectorAll(".seg button"), function (b) {
+        b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+      });
+      draw();
+    });
+  });
+  seeingEl.addEventListener("input", draw);
+  draw();
+})();
+</script>
+</body>
+</html>
