@@ -27,8 +27,27 @@ Python 3.11 or later. Images: FITS (`.fits`, `.fit`, `.fts`) and XISF.
 | `star_aberration.model` | everything that is measured and judged, without Qt: settings, image loading, star detection, PSF fit, FWHM grid, tilt, star shapes, streamlines, tracking, coma, FWHM surface, optics and mount from the header, analysis, assessment, series, results files |
 | `star_aberration.render` | the maps (Size, Shape, Coma, Tilt), the 3D tilt plot and the mosaic, drawn with QPainter into QImages |
 | `star_aberration.ai` | the AI review: system prompt, data, request (Anthropic SDK), answer schema, formatting, log file |
-| `star_aberration.view` | the main window and its widgets; texts and tooltips as in the PixInsight dialog (`ui_text.json`) |
-| `star_aberration.controller` | the state, the reactions to the view, the work in background threads |
+| `star_aberration.view` | the main window (menus, toolbar, tabs, docks), the inspector, the preferences dialog, the binding of widgets to the settings; tooltips as in the PixInsight dialog (`ui_text.json`) |
+| `star_aberration.controller` | the settings and the state, the reactions to the actions of the window, the work in background threads |
+
+## Using it
+
+- **File › Open Image…** (Ctrl+O), *Open Recent*, or drop a FITS/XISF file on
+  the window; **Analysis › Calculate** (Ctrl+R) measures the stars.
+- The toolbar (or **View**, Ctrl+1 … Ctrl+4) switches between the maps Star
+  Size, Star Shape, Coma and Tilt; the **Inspector** beside the map shows the
+  image's optics, mount and guiding, the layers of the map shown and its
+  evaluation. Layer changes redraw the map at once.
+- **Assessment** tab: the rule-based assessment and the AI review
+  (**Analysis › Ask Claude**).
+- **Series** tab: **Series › Add Frames…** (or drop several files),
+  **Series › Analyze Series**; the comparison of the sides of the meridian
+  flip, each frame's map, and the pooled static optics (toolbar *Data*).
+- **File › Export Maps…** writes the four maps, the 3D tilt plot and the star
+  table; **Save/Load Results** keep a measurement.
+- **Settings › Preferences…** (Ctrl+,): measurement, optics, output and the
+  AI review (API key); the optics type and the most used switches also
+  directly in the **Settings** menu.
 
 ## Differences from the PixInsight script
 
@@ -38,10 +57,9 @@ Python 3.11 or later. Images: FITS (`.fits`, `.fit`, `.fts`) and XISF.
   MAD outlier filter, the automatic lowering of the threshold); the detector
   parameters keep their meaning but not their exact effect, so the star
   counts differ somewhat from PixInsight's.
-- **Save** writes the four maps, the 3D plot and the CSV next to the image
-  instead of opening windows.
-- The **target image** is opened with *Open image...* instead of being chosen
-  among PixInsight's windows.
+- The window is an app of its own: menus, toolbar, preferences dialog,
+  inspector, drag and drop; *Export Maps* writes files instead of opening
+  PixInsight windows.
 - The **AI review** streams the answer (no time limit on long answers).
 
 ## Settings and API key

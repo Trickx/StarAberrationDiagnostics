@@ -1,4 +1,4 @@
-"""Starts the program: python -m star_aberration [image ...]"""
+"""Starts the app: star-aberration [image | frames ...]"""
 
 from __future__ import annotations
 
@@ -13,14 +13,15 @@ def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv if argv is None else argv)
     app = QApplication(argv)
     app.setApplicationName(TITLE)
+    app.setOrganizationName("Tricx")
     from .controller.main_controller import MainController
     from .model.settings import SettingsStore
-    from .view.main_window import MainWindow
 
-    window = MainWindow()
-    controller = MainController(window, SettingsStore())
-    window.show()
-    window._controller = controller  # kept alive with the window
+    controller = MainController(SettingsStore())
+    controller.v.show()
+    files = [a for a in argv[1:] if not a.startswith("-")]
+    if files:
+        controller.files_dropped(files)
     return app.exec()
 
 
