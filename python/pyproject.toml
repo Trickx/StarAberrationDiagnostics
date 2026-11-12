@@ -30,3 +30,6 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.setuptools.package-data]
+star_aberration = ["ai/*.txt", "ai/*.json", "view/*.json"]

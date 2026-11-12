@@ -1,0 +1,302 @@
+{
+ "aiButton": {
+  "text": "Ask Claude",
+  "tooltip": "<p>Sends the measured values of the kept analysis (Calculate), the script assessment and optionally the three maps, and the comparison of the Series tab if there is one, to Claude (claude-opus-5-5, Anthropic API) and shows its review on the AI review tab left: which explanation fits all values, where the rules are too strict or too lenient, and what to do in which order. Either a Calculate or a series is enough.</p><p>Needs an API key and an internet connection; each request is billed to the key (typically a few cents) and can take a minute. No image data other than the attached maps leaves the computer.</p>"
+ },
+ "aiContinueButton": {
+  "text": "Continue",
+  "tooltip": "<p>Only when Claude's answer was cut off at the token limit: asks Claude for the rest of the answer and shows the joined answer. Billed like a new request (the request and the answer so far are sent again).</p>"
+ },
+ "aiDetailCombo": {
+  "text": "",
+  "tooltip": "<p><b>Step by step</b>: for up to 6 findings that need attention, the measured values and what they mean, what the stars look like, the derivation of the cause, at most two other causes, what to do and how to check it - each in at most two sentences, terms explained briefly (about 700 words).</p><p><b>Short</b>: up to 5 findings, at most 25 words per field (about 300 words) - faster and cheaper.</p>"
+ },
+ "aiKeyEdit": {
+  "text": "",
+  "tooltip": "<p>Your Anthropic API key (console.anthropic.com). The environment variable ANTHROPIC_API_KEY takes precedence when it is set.</p><p>A key entered here is stored unencrypted in PixInsight's settings, but never in a process icon. Clear the field to remove it.</p>"
+ },
+ "aiLanguageEdit": {
+  "text": "",
+  "tooltip": "<p>The language of the AI review, e.g. English or Deutsch.</p>"
+ },
+ "aiSaveLogCheck": {
+  "text": "Save requests and answers",
+  "tooltip": "<p>Saves every request and its answer as a text file StarAberrationAI_<i>date</i>_<i>time</i>.txt: a header with the date and the analyzed files, the request as sent (the maps only as placeholders) and the answer, readable and as JSON. Failed requests are saved with the error.</p><p>The file goes next to the series frames, else next to the target image, else to the temporary directory. The API key is never written.</p>"
+ },
+ "aiSendMapCheck": {
+  "text": "Attach the maps",
+  "tooltip": "<p>Sends the maps Star size, Star shape and Coma with their current layers as images (at most 1092 px each), so that Claude can see the patterns as well as the numbers. Without it, only the measured values and the assessment are sent.</p>"
+ },
+ "apertureSpin": {
+  "text": "",
+  "tooltip": "<p>Aperture of the telescope in mm (e.g. 150 for a Skywatcher 150P). Together with the focal length, this gives the f-number (focal length/aperture).</p><p>Grayed: from the FITS header of the target image (APTDIA, or FOCALLEN/FOCRATIO), 0 when it has none.</p>"
+ },
+ "applyButton": {
+  "text": "Save",
+  "tooltip": "<p>Saves the four maps (Star size, Star shape, Coma, Tilt) as PNG files next to the image (<i>name</i>_Size.png ...), the 3D sensor tilt plot (<i>name</i>_Aberration3D.png, when enabled and pixel pitch, focal length and aperture are known) and, when enabled, the CSV table (<i>name</i>_aberration.csv). Reuses the measurement of the last Calculate when the detection settings are unchanged.</p>"
+ },
+ "bayerPatternCombo": {
+  "text": "",
+  "tooltip": "<p>'Auto' reads the Bayer pattern from the image's FITS/RAW metadata. If that fails ('Unable to acquire CFA pattern information'), manually select the actual sensor pattern here (see the camera specification).</p>"
+ },
+ "cameraValue": {
+  "text": "",
+  "tooltip": "<p>From the FITS header of the target image (INSTRUME, binning from XBINNING/YBINNING), when \"Read the values from the FITS header\" is checked. For information only.</p>"
+ },
+ "cancelButton": {
+  "text": "Cancel",
+  "tooltip": ""
+ },
+ "comaArrowsCheck": {
+  "text": "Show coma arrows (median per grid cell, length = strength)",
+  "tooltip": "<p>Orange arrows on a 9×6 grid with the median flare direction per cell. Unlike the streamlines, their length shows the strength directly. Requires \"Measure PSF asymmetry\".</p>"
+ },
+ "comaStreamlineMinSpin": {
+  "text": "",
+  "tooltip": "<p>A line ends where the smoothed asymmetry drops below this percentage of the field's strength (90th percentile over the seed points). Higher = only the clearly comatic regions, lower = lines reach further into the coma-free zone (noisier).</p>"
+ },
+ "comaStreamlineRadiusSpin": {
+  "text": "",
+  "tooltip": "<p>Smoothing radius of the asymmetry field, in % of the image diagonal. The per-star asymmetry is much noisier than the ellipse orientation, so this radius should be larger than the one for the elongation streamlines (default: about twice).</p>"
+ },
+ "comaStreamlinesCheck": {
+  "text": "Show coma streamlines (orange with arrows)",
+  "tooltip": "<p>Streamlines through the smoothed PSF-asymmetry field (flare direction) instead of the ellipse orientation. Unlike the elongation streamlines they have a real direction (arrowheads) and stop where the coma becomes weak. Under-corrected coma: lines diverge from the coma-free point (source); over-corrected: they converge on it (sink). Deviations from straight radial lines show what a simple coma model cannot, e.g. a tilted corrector. Requires \"Measure PSF asymmetry\".</p>"
+ },
+ "debayerCheck": {
+  "text": "Debayer (SuperPixel) before star detection",
+  "tooltip": "<p>Creates a debayered copy of the target image (SuperPixel method: direct 2x2 pixel grouping without interpolation, half resolution) and continues working on this copy. The original image is left unchanged. Only enable this if the target image is still an unprocessed Bayer mosaic (not true RGB).</p><p>It also applies to the frames of the Series tab. It is disabled for a color target image unless the Series tab lists frames; color images are never debayered.</p>"
+ },
+ "documentationButton": {
+  "text": "",
+  "tooltip": "<p>Opens the handbook and the dialog reference (tricx.de) in the web browser.</p>"
+ },
+ "exportCheck": {
+  "text": "Export data table as CSV",
+  "tooltip": "<p>Save: <i>name</i>_aberration.csv next to the original file (the temporary directory for an image that was never saved). Analyze series: StarAberrationSeries.csv in the directory of the frames. Existing files are replaced.</p>"
+ },
+ "focalLengthSpin": {
+  "text": "",
+  "tooltip": "<p>Focal length of the telescope in mm (e.g. 750 for a Skywatcher 150P).</p><p>Grayed: from the FITS header of the target image (FOCALLEN), 0 when it has none.</p>"
+ },
+ "fwhmArcsecRadio": {
+  "text": "FWHM in arcseconds",
+  "tooltip": "<p>Each cell shows its FWHM in arcseconds (2.07\"), using 206.265 × pixel pitch [µm] / focal length [mm]. Needs pixel pitch and focal length (Setup › General; with SuperPixel debayering, twice the pitch is used automatically) - pixels otherwise.</p>"
+ },
+ "fwhmGridDetailsCheck": {
+  "text": "Uncertainty and star count",
+  "tooltip": "<p>Adds a smaller line to every cell: ± the 1σ uncertainty of its FWHM (its standard error, 1.4826 × MAD / √n - not the scatter of the stars; in pixels, or in arcseconds when only those are shown) and <i>n</i> = number of stars. Two cells differ reliably only when their difference exceeds about 2-3 × √(σ₁² + σ₂²).</p>"
+ },
+ "fwhmPxRadio": {
+  "text": "FWHM in pixels",
+  "tooltip": "<p>Each cell shows its FWHM in image pixels (3.15 px).</p>"
+ },
+ "fwhmRatioRadio": {
+  "text": "Ratio to the center",
+  "tooltip": "<p>Each cell shows its FWHM relative to the center (inner 3×3 cells): ×1.17 = 17% larger stars than in the center - the value the fill and the assessment are based on.</p>"
+ },
+ "guidingCombo": {
+  "text": "",
+  "tooltip": "<p>How the exposures were guided - it decides what a common elongation of all stars means:</p><p><b>Not guided</b>: the mount's tracking (periodic error of the worm, polar drift).<br/><b>Guide scope</b>: differential flexure between guide scope and main optics or mirror flop when it is the same in every frame, the guiding quality when it changes.<br/><b>Off-axis guider</b>: no differential flexure - the same in every frame points rather to astigmatism on the axis.</p><p>No FITS keyword says this; it is saved, also with \"Read the values from the FITS header\". With <b>Unknown</b>, a guide camera in the header (GUIDECAM, written by the ASIAIR) counts as \"guided, method unknown\" - shown beside the field.</p>"
+ },
+ "loadResultsButton": {
+  "text": "Load results...",
+  "tooltip": "<p>Loads results saved with Save results and shows them as after a Calculate, without measuring the stars again: the maps, their evaluations, the assessment, Save and the AI review all work with them. Optics, mount and observation values come from the saved FITS header (or the fields above), the layers from the current settings.</p><p>The background is the image when it is open (same view and file), else dark. The detection settings of the dialog do not apply to loaded results; the next Calculate measures the target image again.</p>"
+ },
+ "madSpin": {
+  "text": "",
+  "tooltip": "<p>Rejects PSF fits whose MAD (mean deviation from the model) is more than X times the median of all successful fits in this image. Filters out noisy/unstable fits (hot pixels, blends, very faint candidates) that would otherwise show up in the vector map as physically implausible, isolated outliers (strong eccentricity right next to calm neighboring stars). 0 = filter disabled.</p>"
+ },
+ "mapSourceCombo": {
+  "text": "",
+  "tooltip": "<p><b>Target image (Calculate)</b>: the image measured by Calculate - to check the settings on one frame before running a series.</p><p><b>Series static</b>: after Analyze series, the stars of all frames (or of one side of the flip) pooled. Each frame loses its dynamic tracking (its own uniform term less the mean of the group) and its FWHM is scaled to the median center FWHM, so the seeing drops out: what remains is fixed to the sensor - the optics, plus any constant tracking, which a single camera angle cannot tell from astigmatism on the axis. With n frames the standard errors are about √n smaller. The background is dark: the pooled stars belong to no single frame.</p>"
+ },
+ "maxCandSpin": {
+  "text": "",
+  "tooltip": "<p>Limits the number of candidates passed to DynamicPSF to the N brightest (sorted by StarDetector flux). The PSF fit is a single, blocking call with no visible intermediate progress - fewer candidates directly shorten its runtime. 0 = fit all found candidates.</p>"
+ },
+ "measureAsymmetryCheck": {
+  "text": "Measure PSF asymmetry (coma direction, coma-free point)",
+  "tooltip": "<p>Gaussian/Moffat fits are point-symmetric and cannot show on which side of the core a comatic flare sits. This option measures the flux centroid and the third moment of each star directly on the pixels relative to the PSF-fit center, draws the median flare direction on a coarse grid (orange arrows), fits the coma field v = k·(P − P0) and marks the coma-free point P0 (magenta) with its bootstrap uncertainty. Adds a few seconds of runtime.</p>"
+ },
+ "moffatCheck": {
+  "text": "Moffat PSF instead of Gaussian",
+  "tooltip": "<p>Moffat is the more realistic profile for stars with a diffraction disk, Gaussian is faster.</p>"
+ },
+ "mountCombo": {
+  "text": "",
+  "tooltip": "<p>The mount, for the assessment: an alt-azimuth mount without a derotator turns the field during the exposure - the stars become arcs around the rotation center, a tangential pattern like field curvature; the assessment then gives its size at the corners (from EXPTIME, CENTALT, CENTAZ and SITELAT) and warns.</p><p>With \"Read the values from the FITS header\" it is estimated (grayed, the source beside it): PIERSIDE East/West means a German equatorial mount; otherwise the mount driver's name in TELESCOP (EQMod, GS Server, iOptron CEM, AM5 ... equatorial; Alt-Az, AZ-GTi, Seestar, Dwarf ... alt-azimuth); else unknown. Uncheck it to choose the mount yourself.</p>"
+ },
+ "opticsFromHeaderCheck": {
+  "text": "Read the values from the FITS header",
+  "tooltip": "<p>Uses XPIXSZ (pixel pitch, by convention including binning), FOCALLEN and APTDIA (or FOCALLEN/FOCRATIO) from the target image's FITS header (and from each frame's header in a series). The fields below then show these values, read-only; a value the header does not give is not set (0) - without an image, all three. Uncheck to enter your own values instead: they are saved and used for every image. Always the physical sensor pitch - the doubling after SuperPixel debayering is applied automatically.</p>"
+ },
+ "opticsTypeCombo": {
+  "text": "",
+  "tooltip": "<p>The optical system, for the suggestions of the Assessment page. A bare Newtonian shows coma and field curvature by design; with a coma corrector, field flattener or reducer, the same patterns point to its spacing. A refractor has hardly any coma: without a flattener, field curvature and astigmatism at the edge are expected, and its lens is collimated at the factory. In a color or broadband frame, a refractor's lateral color elongates the edge stars radially like under-correction. With Unknown, the suggestions name both cases.</p><p>SCT, Maksutov and RASA focus by moving the primary mirror (mirror flop). A classic SCT has coma and a curved field by design; a Maksutov or SCT at f/10-f/15 is seeing-limited with a deep focus zone, so small differences across the field are uncertain. An aplanatic SCT (EdgeHD), a RASA and an astrograph with built-in flattener are meant to be flat: curvature and coma point to the back focus. A RASA at f/2 reacts to a few micrometers of tilt.</p>"
+ },
+ "orientationHeatmapCheck": {
+  "text": "Show orientation heatmap (instead of the star field)",
+  "tooltip": "<p>Replaces the image background with a color-field heatmap of the PSF orientation (like the Seti Astro Suite's \"Orientation Map\", github.com/setiastro/setiastrosuite): θ is fitted per double-angle averaging (with 3-sigma clipping) as a smooth 2D polynomial surface over all stars (degree set below) and colored as the hue of an HSV color wheel - color gradients show the large-scale orientation trend (tilt/coma) more directly than the real star field. Requires enough stars for the chosen fit degree, otherwise it automatically falls back to the normal background.</p>"
+ },
+ "orientationHeatmapDegreeSpin": {
+  "text": "",
+  "tooltip": "<p>Degree of the 2D polynomial fitted to the star orientations. 1 = a plane (pure, uniform tilt only - matches the Seti Astro Suite's default). 2 or higher lets the heatmap also follow local curvature (e.g. a coma pattern) that a plane cannot represent and that may otherwise only show up in the streamlines overlay - at the cost of being more sensitive to noise/outliers, especially near the image edges where fewer stars constrain the higher-order terms.</p>"
+ },
+ "pixelPitchSpin": {
+  "text": "",
+  "tooltip": "<p>Physical pixel size of the sensor in micrometers (e.g. 4.31 for a Canon EOS 550D). 0 = not specified, the tilt angle computation is then skipped. Always enter the physical sensor pitch - with SuperPixel debayering the script automatically uses twice this value (one output pixel = 2x2 sensor pixels).</p><p>Grayed: \"Read the values from the FITS header\" is checked - the value comes from the header of the target image (XPIXSZ), 0 when it has none or there is no image. Uncheck it to enter your own value, which is saved.</p>"
+ },
+ "previewButton": {
+  "text": "Calculate",
+  "tooltip": "<p>Runs the analysis with the current settings and shows a map in the preview - that of the selected Maps tab (Size, Shape, Coma, Tilt) - without opening a window, exporting the CSV file or drawing the 3D plot. Switching between these tabs switches the map at once. The PSF asymmetry is always measured, so that the coma layers can be switched on later.</p><p>After that, the layers and their settings can be changed without measuring the stars again: the preview is redrawn at once. Only a change of the detection settings or the target image needs a new Calculate.</p>"
+ },
+ "radiusSpin": {
+  "text": "",
+  "tooltip": "<p>Search radius of the PSF fit in pixels; adjust to the star size.</p>"
+ },
+ "saveResultsButton": {
+  "text": "Save results...",
+  "tooltip": "<p>Saves the stars measured by the last Calculate (or loaded results) as a file <i>name</i>_aberration.json, by default next to the image: positions, FWHM, shape and asymmetry of every star, the detection settings and the FITS header of the image - about 100 bytes per star. The maps, the evaluations and the assessment are computed from it again on loading; the current layer and optics settings are not part of it.</p>"
+ },
+ "scaleSpin": {
+  "text": "",
+  "tooltip": "<p>Size of the star ellipses here and of the arrows on the Coma map - purely visual.</p>"
+ },
+ "sdClusteredCheck": {
+  "text": "Allow clustered sources",
+  "tooltip": "<p>Detect non-separable double/multiple stars as single objects. Their centroids and shapes are unreliable, so this is off by default.</p>"
+ },
+ "sdCustomCheck": {
+  "text": "Custom StarDetector parameters",
+  "tooltip": "<p>Off: StarDetector runs with its own defaults (structure layers 5, sensitivity 0.5, peak response 0.5, max. distortion 0.6, no clustered sources). These reject strongly elongated and large stars - exactly the aberrated stars at the field edge, which then leave the corners of the FWHM grid empty or sparsely populated.</p><p>On: the values below are used.</p>"
+ },
+ "sdLayersSpin": {
+  "text": "",
+  "tooltip": "<p>Number of dyadic wavelet layers: the largest detectable structure is about 2^n pixels (5 = 32 px). Increase it for large, defocused or strongly aberrated stars. Default 5.</p>"
+ },
+ "sdMaxDistortionSpin": {
+  "text": "",
+  "tooltip": "<p>0..1, higher = more elongated or irregular stars are accepted. Raise it (e.g. 0.8) when the stars at the field edge are strongly elongated. Too high also lets galaxies and blends through. Default 0.6.</p>"
+ },
+ "sdPeakResponseSpin": {
+  "text": "",
+  "tooltip": "<p>0..1, higher = more tolerant of flat star profiles (bloated stars at the field edge); lower = only stars with a prominent peak. Default 0.5.</p>"
+ },
+ "sdSensitivitySpin": {
+  "text": "",
+  "tooltip": "<p>0..1, higher = fainter stars are detected. Default 0.5.</p>"
+ },
+ "seriesAddButton": {
+  "text": "Add files...",
+  "tooltip": ""
+ },
+ "seriesAiButton": {
+  "text": "Ask Claude",
+  "tooltip": "<p>Sends the series (values per frame and the comparison of the sides) to Claude and shows its review on the AI review tab on the left (as on the Assessment tab). A current analysis of Calculate is sent along. API key, answer language and costs: see the Assessment tab.</p>"
+ },
+ "seriesAnalyzeButton": {
+  "text": "Analyze series",
+  "tooltip": "<p>Measures every frame with the current settings (Setup > Star detection, debayer, tracking subtraction, optics) and compares the sides: tilt, FWHM, edge pattern, tracking, coma strength and coma-free point, each judged as stable or changing at the flip, plus drifts over the session.</p><p>Each frame takes about as long as a Calculate. <b>Stop</b> ends the run after the current frame; the frames measured so far are compared, pass 2 is skipped. The CSV export (Setup > General) writes one line per frame.</p><p><b>Pass 2</b> then pools the stars of all frames, and of each side, after taking out each frame's dynamic tracking (its own uniform term less the mean) and scaling its FWHM to the median center FWHM: the static optics with about √n smaller errors. The maps show it at once (Maps - Show: Series static); the report gives the static and the dynamic tracking. Calculate stays a single pass on the target image - to check the settings before a series.</p>"
+ },
+ "seriesClearButton": {
+  "text": "Clear",
+  "tooltip": ""
+ },
+ "seriesRemoveButton": {
+  "text": "Remove",
+  "tooltip": "<p>Removes the selected frames from the list.</p>"
+ },
+ "seriesSaveMapsCheck": {
+  "text": "Save maps next to the frames",
+  "tooltip": "<p>Saves for each frame the images Save opens, as PNG in the frame's directory, named after the frame so that they sort right after it:</p><p><i>name</i>_Size.png, <i>name</i>_Shape.png, <i>name</i>_Coma.png, <i>name</i>_Tilt.png - the four maps with the layers of their tabs<br/><i>name</i>_Aberration3D.png - the 3D sensor tilt plot, when it is enabled (Setup > General) and pixel pitch, focal length and aperture are known</p><p>After pass 2 also SeriesStatic_<i>group</i>_Size.png ... _Tilt.png in the directory of the first frame - the static maps of all frames and of each side.</p><p>Files of an earlier run are replaced.</p>"
+ },
+ "seriesSaveMosaicCheck": {
+  "text": "Save a 3x3 mosaic next to the frames",
+  "tooltip": "<p>Saves for each frame a mosaic as AberrationInspector draws it: the four corners, the four edge centers and the image center, each cropped 1:1 to 512 x 512 px of the stretched image, separated by gray lines.</p><p><i>name</i>_Mosaic.png - PNG, in the frame's directory</p><p>With Debayer enabled, the tiles come from the half-size SuperPixel image. Files of an earlier run are replaced.</p>"
+ },
+ "seriesShowMapsCheck": {
+  "text": "Show each frame's map",
+  "tooltip": "<p>Draws the map of the selected tab (Star shape, Star size or Coma) of each frame in the preview as soon as it is measured, and keeps a reduced copy: clicking a frame in the list shows it again. This takes a few seconds more per frame.</p><p>Only the display changes: the analysis of Calculate, the Assessment tab and the AI review stay as they are (the AI review never gets the maps of the series).</p>"
+ },
+ "seriesSideLabel": {
+  "text": "Side:",
+  "tooltip": "<p>Sets the side of the selected frames.</p>"
+ },
+ "seriesTree": {
+  "text": "",
+  "tooltip": "<p>The light frames of the series. <b>From</b> tells where the side comes from: the PIERSIDE keyword (N.I.N.A., ASCOM), a camera angle that turns by 180° at the flip (ROTATOR of the ASIAIR), the hour angle, or manual. Frames close after the meridian may have no known side.</p><p>Use unregistered, uncropped frames: the image center must be the optical axis.</p>"
+ },
+ "shapeModelSignificantOnlyCheck": {
+  "text": "Hide the model where it is not significant",
+  "tooltip": "<p>The model lines are violet where the model's field is at least 2.45 times its standard error (from the uncertainty of the 7 fitted terms), and a muted gray-violet where it is not - near the points where its terms cancel, and wherever the stars do not pin it down. With this option the muted parts are left out.</p>"
+ },
+ "shapeShowCellsCheck": {
+  "text": "Cell averages with uncertainty",
+  "tooltip": "<p>One bar per cell of the 11×11 grid along the mean axis of its stars (averaged in the doubled angle, since an axis has no direction), its length the mean elongation. The white fan shows the uncertainty of the axis (± standard error / (2 × elongation)). Bright with fan: significantly elongated (≥ 2.45σ); thin and gray: round within the noise; gray dot: fewer than 5 stars.</p>"
+ },
+ "shapeShowDefectsCheck": {
+  "text": "Singular points",
+  "tooltip": "<p>Marks the points where the smoothed axis field has no direction, with their index: optics produce at most one +1 (radial or tangential pattern around the axis) or two +½ (the same split by a uniform term, or binodal astigmatism). More points, and any −½, are noise in the smoothed field - a larger smoothing radius or more stars help.</p>"
+ },
+ "shapeShowMatchCheck": {
+  "text": "Model match per cell",
+  "tooltip": "<p>Compares each cell with the optics model: the mean difference between the stars' shapes and what the model predicts there, in units of its standard error (scatter of the stars / √n).</p><p><b>Magenta</b>: 3σ or more - the cell holds structure no optics of the model produce (bent or pinched optics, dew, vignetting by an off-axis guider or the focuser, nebulosity, halos, double stars - or a pattern of higher order than the model). About one magenta cell per frame is chance; the Evaluation gives the expected number.<br/><b>Green</b>: less than 3σ - the cell agrees with the model within its noise.<br/>No frame: fewer than 5 stars.</p>"
+ },
+ "shapeShowModelCheck": {
+  "text": "Optics model streamlines",
+  "tooltip": "<p>Fits what optics can produce to all stars: a uniform term (tracking residue, astigmatism on the axis), linear terms (a decentered pattern, binodal astigmatism of a misaligned system) and a radial/tangential term growing with r² (field curvature, corrector spacing). Draws its streamlines in violet (muted where it is not significant); \"Model match per cell\" below shows where the stars agree with it. The Evaluation below gives how much of the pattern it explains and its residual chi²/dof (about 1 = explained down to the noise).</p>"
+ },
+ "shapeSignificantOnlyCheck": {
+  "text": "Hide where the direction is not significant",
+  "tooltip": "<p>The streamlines show only a direction, never its strength: on pure noise they still look orderly. They are therefore white where the smoothed elongation is at least 2.45 times its standard error (the local scatter of the stars over their effective number; pure noise exceeds that in 5% of the places) and gray elsewhere. With this option the gray parts are left out.</p>"
+ },
+ "showEllipsesCheck": {
+  "text": "Show star ellipses",
+  "tooltip": "<p>Draws the fitted ellipse of every star. Uncheck to look at the streamlines or the orientation heatmap alone.</p>"
+ },
+ "starAsymArrowsCheck": {
+  "text": "Show one asymmetry arrow per star",
+  "tooltip": "<p>Draws the measured flare direction of every star as an arrow from the star center (length = strength, scaled with the vector scale), for a star-by-star comparison with the ellipses. Default color: alignment with the ellipse axis - green = parallel (coma shapes the star), red = perpendicular (elongation from defocus/field curvature/astigmatism), gray = star nearly round. Arrows below the threshold are hidden. Requires \"Measure PSF asymmetry\".</p>"
+ },
+ "starAsymColorCheck": {
+  "text": "Color by strength instead of alignment",
+  "tooltip": ""
+ },
+ "starAsymMinSpin": {
+  "text": "",
+  "tooltip": "<p>The per-star asymmetry is noisy. Its noise is estimated from the inner field, where the coma is close to zero; only arrows stronger than this many sigma are drawn. 0 = draw all.</p>"
+ },
+ "streamlineRadiusSpin": {
+  "text": "",
+  "tooltip": "<p>How far neighboring stars contribute to smoothing the orientation field, in % of the image diagonal. Smaller = follows local detail more closely (noisier), larger = smoother, more large-scale trend.</p>"
+ },
+ "streamlinesCheck": {
+  "text": "Show streamlines (smoothed orientation trend)",
+  "tooltip": "<p>Shows the large-scale trend of the PSF orientation as continuous lines (like field lines), smoothed over neighboring stars. Radial pattern = under-corrected coma (corrector too close), concentric pattern = over-correction, defocus or field curvature, a pattern that differs between the two sides = tilt; all field lines parallel = tracking. Easier to spot than the noisy per-star vector map alone. Correctly accounts for the fact that the PSF orientation is only defined mod 180° (double-angle averaging).</p><p>White: the direction is significant there; gray: it is not (see the option below).</p>"
+ },
+ "subtractTrackingCheck": {
+  "text": "Subtract it from all stars",
+  "tooltip": "<p>Optical aberrations form patterns that are symmetric around the optical axis and average out over the field; an elongation shared by all stars comes from tracking/guiding, wind or flexure. Its median is always reported in the console; with this option it is also subtracted from every star before the vector map, streamlines, heatmap and the ring analysis are computed, so the optical pattern is not masked by the mount. The CSV keeps the raw values in extra columns.</p>"
+ },
+ "targetCombo": {
+  "text": "",
+  "tooltip": "<p>The image to measure: the images opened with Open image... in this session, or the tips for the test frames.</p>"
+ },
+ "thresholdSpin": {
+  "text": "",
+  "tooltip": "<p>Star detection threshold in units of the background noise. Lower = more, but possibly less reliable stars.</p>"
+ },
+ "tiltAxisCheck": {
+  "text": "Show tilt axis",
+  "tooltip": "<p>Draws the light-blue tilt axis through the sensor center, derived from the 4-quadrant FWHM evaluation, with its angle/direction label.</p>"
+ },
+ "tiltPlot3DCheck": {
+  "text": "3D sensor tilt plot",
+  "tooltip": "<p>Opens a separate window with an isometric 2D graphic (PJSR has no true 3D): a flat reference plane next to the tilted plane computed from the Δz values. Created by Save (and per frame by a series). It needs pixel pitch, focal length and aperture - from the image's FITS header or the fields above: an image without them is skipped with a console note.</p>"
+ },
+ "trackingInfoLabel": {
+  "text": "",
+  "tooltip": "<p>The median elongation of all stars: ellipticity, eccentricity and the direction of the major axis (image coordinates: 0° = right, 90° = down). Below an ellipticity of 0.03 it is negligible.</p>"
+ }
+}

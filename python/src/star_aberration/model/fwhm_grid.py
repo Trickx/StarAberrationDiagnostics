@@ -91,6 +91,11 @@ def fwhm_cell_stats(values: list[float]) -> dict:
     return {"value": trimmed_mean25(values), "n": n, "se": None if n < 2 else robust_spread(values) / math.sqrt(n)}
 
 
+def compute_fwhm_grid(stars: list[Star], w: int, h: int, grid_size: int) -> list[list[float | None]]:
+    """The trimmed mean FWHM per cell (row 0 = top), None for empty cells."""
+    return [[fwhm_cell_stats(b)["value"] for b in row] for row in fwhm_grid_buckets(stars, w, h, grid_size)]
+
+
 def fwhm_ratio_class(ratio: float) -> int:
     """0 good ... 3 strong."""
     k = 0
