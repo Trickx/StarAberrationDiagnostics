@@ -30,7 +30,7 @@ from .coma import fit_coma_field, log_coma_field, measure_star_asymmetry
 from .detection import detect_star_candidates, estimate_background
 from .fwhm_grid import (FWHM_CORNER_NAMES, FWHM_GRID_SIZE, compute_siril_tilt, evaluate_fwhm_grid,
                         format_fwhm_grid_evaluation)
-from .image import ImageData, debayer_superpixel, stretched_rgb8
+from .image import ImageData, debayer_superpixel, should_debayer, stretched_rgb8
 from .log import Log
 from .optics import GUIDING_TYPES, MOUNT_ALTAZ, MOUNT_TYPES, Optics, field_rotation_smear_px
 from .psf import fit_stars
@@ -42,7 +42,7 @@ from .tracking import apply_tracking_correction, compute_tracking_component, log
 
 FWHM_CELL_PX, FWHM_CELL_ARCSEC, FWHM_CELL_RATIO = 0, 1, 2
 
-MEASUREMENT_KEYS = ["threshold", "radius", "use_moffat", "mad_outlier_factor", "max_candidates", "debayer",
+MEASUREMENT_KEYS = ["threshold", "radius", "use_moffat", "mad_outlier_factor", "max_candidates", "debayer", "debayer_auto",
                     "bayer_pattern", "sd_custom", "sd_structure_layers", "sd_sensitivity", "sd_peak_response",
                     "sd_max_distortion", "sd_allow_clustered"]
 
@@ -109,7 +109,7 @@ class Analysis:
 def analysis_key(name: str, path: str, s) -> str:
     """The settings the analysis depends on."""
     return json.dumps([name, path, s.threshold, s.radius, s.use_moffat, s.mad_outlier_factor, s.max_candidates,
-                       s.debayer, s.bayer_pattern if s.debayer else "",
+                       s.debayer, s.debayer_auto, s.bayer_pattern,
                        [s.sd_structure_layers, s.sd_sensitivity, s.sd_peak_response, s.sd_max_distortion,
                         s.sd_allow_clustered] if s.sd_custom else None])
 
@@ -148,14 +148,15 @@ def analyze_image(img: ImageData, s, measure_asymmetry: bool, log: Log, progress
     """Runs the expensive part on an image; None when no stars could be
     measured."""
     progress = progress or Progress()
-    debayer = s.debayer and not img.is_color
-    if s.debayer and not debayer:
+    debayer = should_debayer(img, s)
+    if s.debayer and img.is_color:
         log.warning("Debayer skipped: the target image is a color image, not a Bayer mosaic.")
     target = img
     if debayer:
         progress.step("Debayering (SuperPixel)", 0.0, 0.05)
         try:
-            target = debayer_superpixel(img, s.bayer_pattern)
+            # Automatic: the pattern of the header, unless one is chosen.
+            target = debayer_superpixel(img, s.bayer_pattern if s.debayer or s.bayer_pattern != "Auto" else "Auto")
         except ValueError as e:
             log.error(str(e))
             return None

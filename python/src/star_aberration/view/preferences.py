@@ -32,7 +32,9 @@ class PreferencesDialog(QDialog):
             b.number(dspin("sdMaxDistortionSpin", 0, 1, 2, 0.05), "sd_max_distortion"),
             b.check(check("sdClusteredCheck"), "sd_allow_clustered"),
         ]
-        self.debayer = b.check(check("debayerCheck"), "debayer")
+        self.debayer = b.check(check("debayerCheck", "Always debayer (also without a Bayer pattern in the header)"),
+                               "debayer")
+        self.debayer_auto = b.check(check("debayerAutoCheck"), "debayer_auto")
         self.bayer = b.choice(tip(QComboBox(), "bayerPatternCombo"), "bayer_pattern", BAYER_PATTERNS)
         self.bayer.addItems(BAYER_PATTERNS)
         tabs.addTab(page(
@@ -49,7 +51,8 @@ class PreferencesDialog(QDialog):
                   indent_row(b.check(check("moffatCheck"), "use_moffat")),
                   field_row(field_label("Search radius (px):"), b.number(spin("radiusSpin", 3, 50), "radius")),
                   field_row(field_label("MAD outlier factor:"), b.number(dspin("madSpin", 0, 20, 1, 0.5), "mad_outlier_factor"))),
-            group("Debayer", indent_row(self.debayer), field_row(field_label("Bayer pattern:"), self.bayer)),
+            group("Debayer (SuperPixel)", indent_row(self.debayer_auto), indent_row(self.debayer),
+                  field_row(field_label("Bayer pattern:"), self.bayer)),
             group("Common tracking error", indent_row(b.check(check("subtractTrackingCheck"), "subtract_tracking")))),
             "Measurement")
 
@@ -121,7 +124,7 @@ class PreferencesDialog(QDialog):
     def _changed(self, _field: str) -> None:
         for w in self.sd_widgets:
             w.setEnabled(self.settings.sd_custom)
-        self.bayer.setEnabled(self.settings.debayer)
+        self.bayer.setEnabled(self.settings.debayer or self.settings.debayer_auto)
         header = self.settings.optics_from_header
         for w in self.optics_fields:
             w.setEnabled(not header)

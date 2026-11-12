@@ -65,7 +65,7 @@
  },
  "debayerCheck": {
   "text": "Debayer (SuperPixel) before star detection",
-  "tooltip": "<p>Creates a debayered copy of the target image (SuperPixel method: direct 2x2 pixel grouping without interpolation, half resolution) and continues working on this copy. The original image is left unchanged. Only enable this if the target image is still an unprocessed Bayer mosaic (not true RGB).</p><p>It also applies to the frames of the Series tab. It is disabled for a color target image unless the Series tab lists frames; color images are never debayered.</p>"
+  "tooltip": "<p>Debayers every mono frame, also one whose header names no Bayer pattern - then the Bayer pattern below must be chosen. Color images are never debayered.</p>"
  },
  "documentationButton": {
   "text": "",
@@ -298,5 +298,9 @@
  "trackingInfoLabel": {
   "text": "",
   "tooltip": "<p>The median elongation of all stars: ellipticity, eccentricity and the direction of the major axis (image coordinates: 0° = right, 90° = down). Below an ellipticity of 0.03 it is negligible.</p>"
+ },
+ "debayerAutoCheck": {
+  "text": "Debayer raw color frames automatically (BAYERPAT in the header)",
+  "tooltip": "<p>A raw frame of a color camera is a Bayer mosaic: every pixel sees only one color, and the pattern distorts the star shapes. When the FITS header names the pattern (BAYERPAT, with XBAYROFF/YBAYROFF), the frame is debayered with the SuperPixel method - each 2x2 block becomes one RGB pixel, without interpolation, at half the resolution - for the display and for the measurement. The effective pixel pitch is doubled automatically.</p><p>Bayer pattern: <b>Auto</b> takes the header's; choose one only when the header is wrong.</p>"
  }
 }

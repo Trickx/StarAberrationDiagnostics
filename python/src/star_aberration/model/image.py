@@ -193,6 +193,32 @@ def bayer_pattern_from_keywords(img: ImageData) -> str | None:
     return grid[0][0] + grid[0][1] + grid[1][0] + grid[1][1]
 
 
+def is_cfa(img: ImageData) -> bool:
+    """A raw frame of a color camera: one channel and a Bayer pattern in the
+    header."""
+    return not img.is_color and bayer_pattern_from_keywords(img) is not None
+
+
+def should_debayer(img: ImageData, s) -> bool:
+    """Whether the analysis debayers the image: always with s.debayer, else
+    with s.debayer_auto when the header names a Bayer pattern; never a
+    color image."""
+    if img.is_color:
+        return False
+    return bool(s.debayer or (getattr(s, "debayer_auto", False) and is_cfa(img)))
+
+
+def display_rgb8(img: ImageData) -> np.ndarray:
+    """The image as it is shown before an analysis: a raw CFA frame
+    debayered (SuperPixel, half size), everything stretched."""
+    if is_cfa(img):
+        try:
+            return stretched_rgb8(debayer_superpixel(img, "Auto"))
+        except ValueError:
+            pass
+    return stretched_rgb8(img)
+
+
 def debayer_superpixel(img: ImageData, pattern: str = "Auto") -> ImageData:
     """Groups each 2 x 2 Bayer block into one RGB pixel without interpolation
     (half the resolution on each axis), so that the star profiles are not
@@ -248,15 +274,14 @@ def auto_stretch_params(channel: np.ndarray, shadows_clip: float = -2.8, target_
 
 
 def stretched_rgb8(img: ImageData) -> np.ndarray:
-    """The image stretched for display (linked channels) as uint8 RGB
-    (h, w, 3) - the background of the maps."""
+    """The image stretched for display as uint8 RGB (h, w, 3) - the
+    background of the maps. Each channel is stretched on its own, so that
+    the sky background of a color image is neutral gray."""
     p = img.pixels
     chans = [p] if p.ndim == 2 else [p[:, :, k] for k in range(3)]
-    params = [auto_stretch_params(c) for c in chans]
-    c0 = float(np.mean([q[0] for q in params]))
-    m = float(np.mean([q[1] for q in params]))
     out = []
     for c in chans:
+        c0, m = auto_stretch_params(c)
         x = np.clip((c - c0) / max(1e-12, 1 - c0), 0, 1)
         out.append((mtf(m, x) * 255 + 0.5).astype(np.uint8))
     if len(out) == 1:

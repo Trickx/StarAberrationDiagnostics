@@ -36,7 +36,7 @@ import numpy as np
 from .analysis import Analysis, Cancelled, Progress, analyze_image, report_analysis, stars_for
 from .coma import fit_coma_field
 from .fwhm_grid import FWHM_GRID_SIZE, evaluate_fwhm_grid
-from .image import ImageData, load_image, read_keywords
+from .image import ImageData, load_image, read_keywords, should_debayer
 from .log import Log, SILENT
 from .optics import (GUIDING_UNKNOWN, Optics, gmst_deg, guiding_causes, keyword_number, keyword_values,
                      parse_fits_date, resolve_optics)
@@ -537,7 +537,7 @@ def measure_series(frames: list[SeriesFrame], s, log: Log, progress: Progress,
         try:
             sub.step("Opening the file", 0, 0)
             img = load_image(f.path)
-            f.bayer_warning = f.bayer and not s.debayer and not img.is_color
+            f.bayer_warning = f.bayer and not should_debayer(img, s)
             analysis = analyze_image(img, s, True, SILENT, sub, with_background=on_frame is not None)
             if analysis is None:
                 raise ValueError("No stars could be measured.")

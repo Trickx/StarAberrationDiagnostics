@@ -110,3 +110,16 @@ def test_ai_message(measured):
     text = msg["content"][-1]["text"]
     assert '"eRad"' in text and '"fwhmGridAssessment"' in text and "Write all texts" in text
     assert "Star Aberration Diagnostics" in SYSTEM_PROMPT
+
+
+def test_cfa_frames_are_debayered_automatically():
+    raw = image.ImageData(np.random.default_rng(0).random((40, 60), dtype=np.float32), [("BAYERPAT", "'RGGB'")])
+    mono = image.ImageData(raw.pixels, [])
+    s = Settings()
+    assert image.is_cfa(raw) and not image.is_cfa(mono)
+    assert image.should_debayer(raw, s) and not image.should_debayer(mono, s)
+    assert image.display_rgb8(raw).shape == (20, 30, 3)
+    s.debayer_auto = False
+    assert not image.should_debayer(raw, s)
+    assert image.bayer_pattern_from_keywords(
+        image.ImageData(raw.pixels, [("BAYERPAT", "RGGB"), ("XBAYROFF", "1")])) == "GRBG"

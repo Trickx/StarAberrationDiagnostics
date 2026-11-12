@@ -32,7 +32,8 @@ class Settings:
     sd_peak_response: float = 0.5  # 0..1, higher = more tolerant of flat profiles
     sd_max_distortion: float = 0.6  # 0..1, higher = more elongated stars accepted
     sd_allow_clustered: bool = False
-    debayer: bool = False
+    debayer: bool = False  # always debayer (a mono image without BAYERPAT too)
+    debayer_auto: bool = True  # debayer when the header names a Bayer pattern (BAYERPAT)
     bayer_pattern: str = "Auto"
     # ---- General
     vector_scale: float = 1.0

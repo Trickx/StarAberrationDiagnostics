@@ -28,7 +28,8 @@ from ..model.analysis import (Analysis, analysis_key, analyze_image, export_csv,
 from ..model.assessment import OPTICS_TYPES, assess_image, format_assessment_html
 from ..model.coma import log_coma_field
 from ..model.fwhm_grid import FWHM_GRID_SIZE, compute_siril_tilt, evaluate_fwhm_grid, format_fwhm_grid_evaluation
-from ..model.image import SUPPORTED_EXTENSIONS, ImageData, load_image, stretched_rgb8
+from ..model.image import (SUPPORTED_EXTENSIONS, ImageData, bayer_pattern_from_keywords, display_rgb8, load_image,
+                           should_debayer, stretched_rgb8)
 from ..model.log import SILENT, Log
 from ..model.optics import (GUIDING_TYPES, GUIDING_UNKNOWN, MOUNT_TYPES, effective_guiding, estimate_mount,
                             keyword_values, read_camera_from_header, read_optics_from_header, resolve_optics)
@@ -57,7 +58,7 @@ REFERENCE_URL = "https://tricx.de/pi-scripts/StarAberrationDiagnostics/dialog/"
 IMAGE_FILTER = "Images (*.fits *.fit *.fts *.xisf);;All files (*)"
 MAX_RECENT = 10
 # Fields whose change makes the measurement of the last Calculate stale.
-MEASUREMENT_FIELDS = {"threshold", "radius", "use_moffat", "mad_outlier_factor", "max_candidates", "debayer",
+MEASUREMENT_FIELDS = {"threshold", "radius", "use_moffat", "mad_outlier_factor", "max_candidates", "debayer", "debayer_auto",
                       "bayer_pattern", "sd_custom", "sd_structure_layers", "sd_sensitivity", "sd_peak_response",
                       "sd_max_distortion", "sd_allow_clustered"}
 
@@ -312,8 +313,8 @@ class MainController:
         def work(log, progress, emit):
             progress.step("Loading the image", 0, 0.6)
             img = load_image(path)
-            progress.step("Stretching for display", 0.6, 1)
-            return img, stretched_rgb8(img)
+            progress.step("Debayering and stretching for display", 0.6, 1)
+            return img, display_rgb8(img)
 
         def done(res):
             img, rgb = res
@@ -402,8 +403,14 @@ class MainController:
             return
         lines = []
         if img is not None:
-            lines.append(f"<b>{html.escape(img.name)}</b> - {img.width} x {img.height} px, "
-                         f"{'color' if img.is_color else 'mono'}")
+            pattern = bayer_pattern_from_keywords(img) if not img.is_color else None
+            kind = "color" if img.is_color else f"raw color (Bayer {pattern})" if pattern else "mono"
+            lines.append(f"<b>{html.escape(img.name)}</b> - {img.width} x {img.height} px, {kind}")
+            if should_debayer(img, self.s):
+                lines.append(f"Debayered (SuperPixel): measured at {img.width // 2} x {img.height // 2} px")
+            elif pattern:
+                lines.append("<span style='color:#d18616'>Not debayered: the Bayer pattern distorts the star "
+                             "shapes - enable it in Settings › Preferences › Measurement.</span>")
         if a is not None and a.file:
             lines.append(f"<i>Loaded results: {html.escape(Path(a.file).name)} ({len(a.stars)} stars)</i>")
         optics = resolve_optics(self._keywords(), self.s, a.debayer if a else False)
