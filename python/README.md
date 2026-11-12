@@ -13,7 +13,8 @@ How the measurements work is explained in the handbook:
 
 ```
 python3 -m venv .venv
-.venv/bin/pip install -e .            # or: -e ".[dev]" for the tests
+.venv/bin/pip install -r requirements.txt   # the dependencies only
+.venv/bin/pip install -e .            # the package (or -e ".[dev]" with pytest)
 .venv/bin/star-aberration             # or: .venv/bin/python -m star_aberration
 ```
 
