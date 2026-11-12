@@ -45,9 +45,11 @@ from ..render.maps import MAP_VIEWS, format_tilt_evaluation, map_view_by_key, re
 from ..render.paint import image_from_rgb
 from ..render.plot3d import render_3d_tilt_plot, render_mosaic
 from ..view.binding import Binder
-from ..view.main_window import MAP_KEYS, TAB_ASSESSMENT, TAB_SERIES, MainWindow
+from ..view.main_window import (MAP_KEYS, SERIES_AI, SERIES_FRAME_MAP, SERIES_HINTS, SERIES_PLOTS, SERIES_REPORT,
+                                TAB_ASSESSMENT, TAB_MAP, TAB_SERIES, MainWindow)
 from ..view.preferences import PreferencesDialog
 from ..view.widgets import MapPreview, evaluation_html
+from ..view.map_view import MapView
 from .worker import Worker, start
 
 HANDBOOK_URL = "https://github.com/Trickx/StarAberrationDiagnostics/wiki"
@@ -160,13 +162,11 @@ class MainController:
     def status(self, text: str) -> None:
         self.v.statusBar().showMessage(text, 8000)
 
-    def _preview(self) -> MapPreview:
+    def _preview(self) -> MapView:
         return self.v.series_preview if self.v.tabs.currentIndex() == TAB_SERIES else self.v.preview
 
     def _zoom(self, f: float) -> None:
-        p = self._preview()
-        p.scale(f, f)
-        p.fitting = False
+        self._preview().zoom(f)
 
     def run(self, fn, done, label: str, exclusive: bool = True, on_message=None, failed=None) -> Worker | None:
         """Runs fn(log, progress, emit) in the background; done(result) in the
@@ -327,7 +327,7 @@ class MainController:
             self.map_source = 0
             self._fill_sources()
             self.update_image_info()
-            self.v.tabs.setCurrentIndex(0)
+            self.v.tabs.setCurrentIndex(TAB_MAP)
             self.refresh_preview()
 
         def failed(text):
@@ -444,7 +444,7 @@ class MainController:
     def update_tab(self) -> None:
         tab = self.v.tabs.currentIndex()
         if tab == TAB_SERIES and self.series_result is None:
-            self.v.series_tabs.setCurrentIndex(0)
+            self.v.series_tabs.setCurrentIndex(SERIES_HINTS)
 
     def _fill_sources(self) -> None:
         labels = ["Target image (Calculate)"] + [
@@ -467,7 +467,7 @@ class MainController:
     def select_map_source(self, index: int) -> None:
         self.map_source = index
         self._fill_sources()
-        self.v.tabs.setCurrentIndex(0)
+        self.v.tabs.setCurrentIndex(TAB_MAP)
         self.refresh_preview()
 
     def current_analysis(self) -> Analysis | None:
@@ -482,7 +482,9 @@ class MainController:
         self.update_evaluations()
         self.update_assessment()
         self.update_image_info()
+        self.v.preview.set_stars(stars_for(a, self.s.subtract_tracking) if a is not None else None)
         if a is None:
+            self.v.profiles.clear()
             self.v.show_map_view(self.target_bitmap is not None)
             caption = ""
             if self.target is not None:
@@ -538,12 +540,21 @@ class MainController:
              else "shared by all stars: tracking/guiding, wind or flexure."))
 
     def update_assessment(self) -> None:
+        """The assessment of the target image, and the radial profiles of
+        the data shown."""
+        s = self.s
+        shown = self.current_analysis()
+        if shown is not None:
+            stars = stars_for(shown, s.subtract_tracking)
+            rep = report_analysis(shown, stars, s, self.optics_for(shown, s), SILENT)
+            rings = rep["metrics"]["rings"]
+            self.v.profiles.set_data(stars, shown.w, shown.h, rings["profile"] if rings else [])
         a = self.analysis if not self.preview_stale else None
         if a is None:
             self.v.assessment_box.setHtml("<i>Analysis › Calculate assesses the image.</i>")
             return
-        s = self.s
-        rep = report_analysis(a, stars_for(a, s.subtract_tracking), s, self.optics_for(a, s), SILENT)
+        if a is not shown:
+            rep = report_analysis(a, stars_for(a, s.subtract_tracking), s, self.optics_for(a, s), SILENT)
         self.v.assessment_box.setHtml(format_assessment_html(assess_image(rep["metrics"], s.optics_type)))
 
     # ------------------------------------------------------------------
@@ -592,6 +603,7 @@ class MainController:
             self.clear_ai_review()
             self.v.show_map_view(True)
             self.v.preview.set_image(m, f"{a.target_name} - {map_view_by_key(key).label}")
+            self.v.preview.set_stars(stars_for(a, self.s.subtract_tracking))
             self.update_evaluations()
             self.update_assessment()
             self.update_image_info()
@@ -744,7 +756,7 @@ class MainController:
         self.map_source = 0
         self._fill_sources()
         self.clear_ai_review()
-        self.v.tabs.setCurrentIndex(0)
+        self.v.tabs.setCurrentIndex(TAB_MAP)
         self.refresh_preview()
 
     # ------------------------------------------------------------------
@@ -778,7 +790,7 @@ class MainController:
         self.set_ai_text("<i>Waiting for Claude's answer - this can take a minute ...</i>")
         self.v.tabs.setCurrentIndex(TAB_SERIES if self.v.tabs.currentIndex() == TAB_SERIES else TAB_ASSESSMENT)
         if self.v.tabs.currentIndex() == TAB_SERIES:
-            self.v.series_tabs.setCurrentIndex(3)
+            self.v.series_tabs.setCurrentIndex(SERIES_AI)
         self.ai_pending = None
         self.v.act_continue.setEnabled(False)
         self.v.ai_continue_button.setEnabled(False)
@@ -953,6 +965,14 @@ class MainController:
             t.addTopLevelItem(item)
             item.setSelected(id(f) in selected)
 
+    def update_series_plots(self) -> None:
+        def value(key, f):
+            v = series_metric(key).get(f.metrics, f)
+            if v is None:
+                return None
+            return 100 * math.hypot(*v) if key == "tilt" else v
+        self.v.series_plots.set_frames(self.series_frames, value)
+
     def selected_frames(self) -> list:
         t = self.v.series_tree
         return [self.series_frames[t.indexOfTopLevelItem(i)] for i in t.selectedItems()
@@ -964,12 +984,13 @@ class MainController:
             self.series_result = None
             self.series_static = []
             self._fill_sources()
-            self.v.series_tabs.setCurrentIndex(0)
+            self.v.series_tabs.setCurrentIndex(SERIES_HINTS)
         elif self.series_result is not None:
             static, stop = self.series_result.get("static", []), self.series_result.get("stop")
             self.series_result = compare_series(self.series_frames)
             self.series_result["static"], self.series_result["stop"] = static, stop
             self.v.series_box.setHtml(format_series_report(self.series_result))
+        self.update_series_plots()
         self.fill_series_tree()
         self.update_series_hints()
 
@@ -1011,7 +1032,7 @@ class MainController:
         if 0 <= i < len(self.series_frames):
             f = self.series_frames[i]
             if f.map_image is not None:
-                self.v.series_tabs.setCurrentIndex(1)
+                self.v.series_tabs.setCurrentIndex(SERIES_FRAME_MAP)
                 self.v.series_preview.set_image(f.map_image, f"{f.name} - {map_view_by_key(f.map_key).label}")
 
     def _series_running(self, running: bool) -> None:
@@ -1035,7 +1056,7 @@ class MainController:
         key = self.v.current_map_key()
         with_maps = s.series_show_maps or s.series_save_maps or s.series_save_mosaic
         self.v.tabs.setCurrentIndex(TAB_SERIES)
-        self.v.series_tabs.setCurrentIndex(1)
+        self.v.series_tabs.setCurrentIndex(SERIES_FRAME_MAP)
         t_start = time.monotonic()
         holder: dict = {}
 
@@ -1105,7 +1126,8 @@ class MainController:
             self._fill_sources()
             self.fill_series_tree()
             self.v.series_box.setHtml(format_series_report(result))
-            self.v.series_tabs.setCurrentIndex(2)
+            self.update_series_plots()
+            self.v.series_tabs.setCurrentIndex(SERIES_REPORT)
             self.clear_ai_review()
             self.log("note", f"Series done in {time.monotonic() - t_start:.1f} s.")
             self.status(f"Series: {measured} of {len(frames)} frames measured.")

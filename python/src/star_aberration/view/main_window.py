@@ -17,25 +17,28 @@ from __future__ import annotations
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QAction, QActionGroup, QIcon, QKeySequence
-from PySide6.QtWidgets import (QAbstractItemView, QButtonGroup, QComboBox, QDockWidget, QHBoxLayout, QHeaderView,
-                               QLabel, QMainWindow, QMenu, QProgressBar, QPushButton, QScrollArea, QSplitter,
-                               QStackedWidget, QStyle, QTabWidget, QTextBrowser, QToolBar, QToolButton, QTreeWidget,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QButtonGroup, QComboBox, QDockWidget, QFrame, QHBoxLayout,
+                               QHeaderView, QLabel, QMainWindow, QMenu, QProgressBar, QPushButton, QScrollArea,
+                               QSizePolicy, QSplitter, QStackedWidget, QTabWidget, QTextBrowser, QToolBar, QToolButton,
+                               QTreeWidget, QVBoxLayout, QWidget)
 
 from .. import TITLE, VERSION
 from ..model.assessment import OPTICS_TYPES
 from .binding import Binder
 from .inspector import Inspector
-from .widgets import Console, MapPreview, rich_label, tip
+from .map_view import MapView
+from .plots import ProfilesView, SeriesPlots
+from .theme import icon
+from .widgets import Console, rich_label, tip
 
 SERIES_COLUMNS = ["File", "Side", "From", "HA (h)", "Alt", "Focus", "Stars", "FWHM", "Tilt", "eps_rad", "Track",
                   "Coma k", "SIP"]
 MAP_KEYS = ["size", "shape", "coma", "tilt"]
 MAP_LABELS = ["Star Size", "Star Shape", "Coma", "Tilt"]
-TAB_MAP, TAB_ASSESSMENT, TAB_SERIES = 0, 1, 2
+TAB_MAP, TAB_PROFILES, TAB_ASSESSMENT, TAB_SERIES = 0, 1, 2, 3
+SERIES_HINTS, SERIES_FRAME_MAP, SERIES_REPORT, SERIES_PLOTS, SERIES_AI = range(5)
 
-WELCOME_HTML = """<h2>Star Aberration Diagnostics</h2>
-<p>Diagnoses the optical system from the shapes of the stars: sensor tilt, corrector spacing, field curvature,
+WELCOME_HTML = """<p>Diagnoses the optical system from the shapes of the stars: sensor tilt, corrector spacing, field curvature,
 coma, collimation and tracking errors.</p>
 <p><b>File › Open Image…</b> (or drop a FITS/XISF file here), then <b>Analysis › Calculate</b>.</p>
 <h3>Tips for the test frames</h3>
@@ -97,37 +100,38 @@ class MainWindow(QMainWindow):
             a.setToolTip(tooltip)
             a.setStatusTip(tooltip)
         if icon is not None:
-            a.setIcon(self.style().standardIcon(icon))
+            a.setIcon(globals()["icon"](icon))
         a.setCheckable(checkable)
         return a
 
     def _build_actions(self) -> None:
-        P = QStyle.StandardPixmap
         K = QKeySequence.StandardKey
-        self.act_open = self._action("&Open Image…", K.Open, "Open a FITS or XISF image", P.SP_DialogOpenButton)
+        self.act_open = self._action("&Open Image…", K.Open, "Open a FITS or XISF image", "mdi6.folder-open-outline")
         self.act_close_image = self._action("&Close Image", K.Close, "Close the current image")
         self.act_load_results = self._action("&Load Results…", None, "Load a saved measurement")
         self.act_save_results = self._action("&Save Results…", K.Save, "Save the measurement of the last Calculate",
-                                             P.SP_DialogSaveButton)
+                                             "mdi6.content-save-outline")
         self.act_export_maps = self._action("&Export Maps…", "Ctrl+E",
-                                            "Save the four maps, the 3D tilt plot and the star table as files")
+                                            "Save the four maps, the 3D tilt plot and the star table as files",
+                                            "mdi6.export-variant")
         self.act_export_csv = self._action("Export Star &Table (CSV)…", None, "Save one line per star as CSV")
         self.act_quit = self._action("&Quit", K.Quit)
         self.act_quit.setMenuRole(QAction.MenuRole.QuitRole)
 
         self.act_calculate = self._action("&Calculate", "Ctrl+R", "Measure the stars and draw the map",
-                                          P.SP_MediaPlay)
+                                          "mdi6.play")
         self.act_ask = self._action("Ask &Claude", "Ctrl+Shift+A", "A second opinion on the results by Claude",
-                                    P.SP_MessageBoxQuestion)
+                                    "mdi6.creation")
         self.act_continue = self._action("C&ontinue the Answer", None, "Get the rest of an answer cut off at the "
                                          "token limit")
         self.act_continue.setEnabled(False)
         self.act_plot3d = self._action("3D &Tilt Plot…", None, "The tilt plane fitted to the quadrants, as a pseudo-"
-                                       "3D plot")
-        self.act_stop = self._action("&Stop", "Esc", "Stop the running calculation", P.SP_BrowserStop)
+                                       "3D plot", "mdi6.cube-outline")
+        self.act_stop = self._action("&Stop", "Esc", "Stop the running calculation", "mdi6.stop")
         self.act_stop.setEnabled(False)
 
-        self.act_series_add = self._action("&Add Frames…", "Ctrl+Shift+O", "Add light frames to the series")
+        self.act_series_add = self._action("&Add Frames…", "Ctrl+Shift+O", "Add light frames to the series",
+                                           "mdi6.image-multiple-outline")
         self.act_series_remove = self._action("&Remove Selected Frames", None)
         self.act_series_clear = self._action("C&lear Series", None)
         self.act_side_west = self._action("&West (before the flip)", None)
@@ -147,7 +151,8 @@ class MainWindow(QMainWindow):
         self.act_zoom_in = self._action("Zoom &In", K.ZoomIn)
         self.act_zoom_out = self._action("Zoom &Out", K.ZoomOut)
 
-        self.act_preferences = self._action("&Preferences…", "Ctrl+,", "Measurement, optics, output and AI settings")
+        self.act_preferences = self._action("&Preferences…", "Ctrl+,", "Measurement, optics, output and AI settings",
+                                            "mdi6.cog-outline")
         self.act_preferences.setMenuRole(QAction.MenuRole.NoRole)
         self.act_reset = self._action("&Reset All Settings…", None)
         self.optics_actions = []
@@ -160,7 +165,7 @@ class MainWindow(QMainWindow):
         self.act_subtract_tracking = self._action("&Subtract the Common Tracking Error", checkable=True)
         self.act_measure_asym = self._action("Measure PSF &Asymmetry (Coma)", checkable=True)
 
-        self.act_handbook = self._action("&Handbook", K.HelpContents)
+        self.act_handbook = self._action("&Handbook", K.HelpContents, "", "mdi6.book-open-variant")
         self.act_reference = self._action("Dialog &Reference (website)", None)
         self.act_about = self._action("&About", None)
         self.act_about.setMenuRole(QAction.MenuRole.AboutRole)
@@ -231,23 +236,40 @@ class MainWindow(QMainWindow):
         tb.setObjectName("main_toolbar")
         tb.setMovable(False)
         tb.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
-        for a in (self.act_open, self.act_calculate, self.act_stop):
-            tb.addAction(a)
-        tb.addSeparator()
-        self.map_buttons = QButtonGroup(self)
+        tb.addAction(self.act_open)
+        calc = QToolButton()
+        calc.setDefaultAction(self.act_calculate)
+        calc.setObjectName("primary")
+        calc.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.act_calculate.setIcon(icon("mdi6.play", "#ffffff"))
+        tb.addWidget(calc)
+        tb.addAction(self.act_stop)
+        spacer = QWidget()
+        spacer.setFixedWidth(16)
+        tb.addWidget(spacer)
+        seg = QFrame()
+        seg.setObjectName("segmented")
+        sl = QHBoxLayout(seg)
+        sl.setContentsMargins(2, 2, 2, 2)
+        sl.setSpacing(2)
         for i, label in enumerate(MAP_LABELS):
             b = QToolButton()
             b.setDefaultAction(self.map_actions[i])
             b.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
-            tb.addWidget(b)
-        tb.addSeparator()
-        tb.addWidget(QLabel(" Data: "))
+            sl.addWidget(b)
+        tb.addWidget(seg)
+        spacer = QWidget()
+        spacer.setFixedWidth(12)
+        tb.addWidget(spacer)
         self.source_combo = tip(QComboBox(), "mapSourceCombo")
-        self.source_combo.setMinimumWidth(220)
+        self.source_combo.setMinimumWidth(230)
         tb.addWidget(self.source_combo)
-        tb.addSeparator()
+        stretch = QWidget()
+        stretch.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        tb.addWidget(stretch)
         tb.addAction(self.act_export_maps)
         tb.addAction(self.act_ask)
+        tb.addAction(self.act_preferences)
         self.addToolBar(tb)
 
     def _build_center(self) -> None:
@@ -255,17 +277,32 @@ class MainWindow(QMainWindow):
         self.tabs.setDocumentMode(True)
 
         # Map
-        self.preview = MapPreview()
+        self.preview = MapView()
         self.welcome = rich_label(WELCOME_HTML)
         welcome = QWidget()
         wl = QVBoxLayout(welcome)
-        wl.setContentsMargins(24, 16, 24, 16)
+        wl.setContentsMargins(40, 32, 40, 24)
+        title = QLabel("Star Aberration Diagnostics")
+        title.setObjectName("title")
+        wl.addWidget(title)
+        open_btn = QPushButton(icon("mdi6.folder-open-outline", "#ffffff"), "  Open Image…")
+        open_btn.setObjectName("primary")
+        open_btn.clicked.connect(self.act_open.trigger)
+        row = QHBoxLayout()
+        row.addWidget(open_btn)
+        add_btn = QPushButton(icon("mdi6.image-multiple-outline"), "  Add Series Frames…")
+        add_btn.clicked.connect(self.act_series_add.trigger)
+        row.addWidget(add_btn)
+        row.addStretch(1)
+        wl.addLayout(row)
         wl.addWidget(self.welcome)
         wl.addStretch(1)
         self.map_stack = QStackedWidget()
         self.map_stack.addWidget(_scroll(welcome))
         self.map_stack.addWidget(self.preview)
-        self.tabs.addTab(self.map_stack, "Map")
+        self.tabs.addTab(self.map_stack, icon("mdi6.image-filter-center-focus-weak"), "Map")
+        self.profiles = ProfilesView()
+        self.tabs.addTab(self.profiles, icon("mdi6.chart-scatter-plot"), "Profiles")
 
         # Assessment
         self.assessment_box = _browser()
@@ -276,7 +313,8 @@ class MainWindow(QMainWindow):
         hl = QHBoxLayout()
         hl.addWidget(QLabel("<b>AI review (Claude)</b>"))
         hl.addStretch(1)
-        self.ai_button = QPushButton("Ask Claude")
+        self.ai_button = QPushButton(icon("mdi6.creation", "#ffffff"), "  Ask Claude")
+        self.ai_button.setObjectName("primary")
         self.ai_button.clicked.connect(self.act_ask.trigger)
         self.ai_continue_button = QPushButton("Continue")
         self.ai_continue_button.clicked.connect(self.act_continue.trigger)
@@ -293,7 +331,7 @@ class MainWindow(QMainWindow):
         split = QSplitter(Qt.Orientation.Horizontal)
         split.addWidget(script)
         split.addWidget(ai)
-        self.tabs.addTab(split, "Assessment")
+        self.tabs.addTab(split, icon("mdi6.clipboard-check-outline"), "Assessment")
 
         # Series
         self.series_tree = tip(QTreeWidget(), "seriesTree")
@@ -307,10 +345,11 @@ class MainWindow(QMainWindow):
         for a in (self.act_series_add, self.act_series_remove, self.act_side_west, self.act_side_east,
                   self.act_side_auto):
             self.series_tree.addAction(a)
-        self.series_run_button = QPushButton("Analyze Series")
+        self.series_run_button = QPushButton(icon("mdi6.play", "#ffffff"), "  Analyze Series")
         self.series_run_button.clicked.connect(self.act_series_run.trigger)
         tip(self.series_run_button, "seriesAnalyzeButton")
-        add = QPushButton("Add Frames…")
+        self.series_run_button.setObjectName("primary")
+        add = QPushButton(icon("mdi6.image-multiple-outline"), "  Add Frames…")
         add.clicked.connect(self.act_series_add.trigger)
         left = QWidget()
         ll = QVBoxLayout(left)
@@ -322,19 +361,21 @@ class MainWindow(QMainWindow):
         row.addWidget(self.series_run_button)
         ll.addLayout(row)
         self.series_hints = rich_label()
-        self.series_preview = MapPreview()
+        self.series_preview = MapView()
         self.series_box = _browser()
         self.series_ai_box = _browser()
+        self.series_plots = SeriesPlots()
         self.series_tabs = QTabWidget()
         self.series_tabs.addTab(_scroll(self.series_hints), "Before You Start")
         self.series_tabs.addTab(self.series_preview, "Frame Map")
         self.series_tabs.addTab(self.series_box, "Report")
+        self.series_tabs.addTab(self.series_plots, "Over the Night")
         self.series_tabs.addTab(self.series_ai_box, "AI Review")
         split = QSplitter(Qt.Orientation.Vertical)
         split.addWidget(left)
         split.addWidget(self.series_tabs)
         split.setSizes([300, 600])
-        self.tabs.addTab(split, "Series")
+        self.tabs.addTab(split, icon("mdi6.chart-timeline-variant"), "Series")
         self.setCentralWidget(self.tabs)
 
     def _build_docks(self) -> None:
@@ -350,6 +391,8 @@ class MainWindow(QMainWindow):
         c.setWidget(self.console)
         self.addDockWidget(Qt.DockWidgetArea.BottomDockWidgetArea, c)
         self.console_dock = c
+        c.hide()
+        self.resizeDocks([d], [520], Qt.Orientation.Horizontal)
         self.view_menu.addAction(d.toggleViewAction())
         self.view_menu.addAction(c.toggleViewAction())
         d.toggleViewAction().setShortcut(QKeySequence("Ctrl+I"))

@@ -16,6 +16,9 @@ def main(argv: list[str] | None = None) -> int:
     app.setOrganizationName("Tricx")
     from .controller.main_controller import MainController
     from .model.settings import SettingsStore
+    from .view import theme
+
+    theme.apply(app, "auto")
 
     controller = MainController(SettingsStore())
     controller.v.show()

@@ -27,7 +27,7 @@ Python 3.11 or later. Images: FITS (`.fits`, `.fit`, `.fts`) and XISF.
 | `star_aberration.model` | everything that is measured and judged, without Qt: settings, image loading, star detection, PSF fit, FWHM grid, tilt, star shapes, streamlines, tracking, coma, FWHM surface, optics and mount from the header, analysis, assessment, series, results files |
 | `star_aberration.render` | the maps (Size, Shape, Coma, Tilt), the 3D tilt plot and the mosaic, drawn with QPainter into QImages |
 | `star_aberration.ai` | the AI review: system prompt, data, request (Anthropic SDK), answer schema, formatting, log file |
-| `star_aberration.view` | the main window (menus, toolbar, tabs, docks), the inspector, the preferences dialog, the binding of widgets to the settings; tooltips as in the PixInsight dialog (`ui_text.json`) |
+| `star_aberration.view` | the main window (menus, toolbar, tabs, docks), the map viewer and the diagrams (pyqtgraph), the inspector, the preferences dialog, the theme (dark/light, qtawesome icons), the binding of widgets to the settings; tooltips as in the PixInsight dialog (`ui_text.json`) |
 | `star_aberration.controller` | the settings and the state, the reactions to the actions of the window, the work in background threads |
 
 ## Using it
@@ -35,14 +35,20 @@ Python 3.11 or later. Images: FITS (`.fits`, `.fit`, `.fts`) and XISF.
 - **File › Open Image…** (Ctrl+O), *Open Recent*, or drop a FITS/XISF file on
   the window; **Analysis › Calculate** (Ctrl+R) measures the stars.
 - The toolbar (or **View**, Ctrl+1 … Ctrl+4) switches between the maps Star
-  Size, Star Shape, Coma and Tilt; the **Inspector** beside the map shows the
+  Size, Star Shape, Coma and Tilt. The map zooms with the wheel and pans by
+  dragging (double click: fit); under the mouse the position and the values of
+  the nearest star are shown. The **Inspector** beside the map shows the
   image's optics, mount and guiding, the layers of the map shown and its
   evaluation. Layer changes redraw the map at once.
+- **Profiles** tab: FWHM, elongation (eps_rad) and coma flare of every star
+  against the distance from the center, with the ring medians, and the FWHM
+  distribution.
 - **Assessment** tab: the rule-based assessment and the AI review
   (**Analysis › Ask Claude**).
 - **Series** tab: **Series › Add Frames…** (or drop several files),
   **Series › Analyze Series**; the comparison of the sides of the meridian
-  flip, each frame's map, and the pooled static optics (toolbar *Data*).
+  flip, each frame's map, the values of each frame over the night, and the
+  pooled static optics (toolbar *Data*).
 - **File › Export Maps…** writes the four maps, the 3D tilt plot and the star
   table; **Save/Load Results** keep a measurement.
 - **Settings › Preferences…** (Ctrl+,): measurement, optics, output and the

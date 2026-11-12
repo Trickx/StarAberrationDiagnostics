@@ -39,7 +39,7 @@ class Inspector(QScrollArea):
         lay.addWidget(self.pages)
         lay.addStretch(1)
         self.setWidget(body)
-        self.setMinimumWidth(380)
+        self.setMinimumWidth(500)
 
     def show_map(self, key: str) -> None:
         self.pages.setCurrentIndex(self.MAP_KEYS.index(key))

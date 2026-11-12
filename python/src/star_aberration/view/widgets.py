@@ -19,7 +19,7 @@ from ..model.fwhm_grid import FWHM_RATIO_LIMITS
 
 UI_TEXT: dict = json.loads(resources.files(__package__).joinpath("ui_text.json").read_text(encoding="utf-8"))
 
-LABEL_WIDTH = 150
+LABEL_WIDTH = 170
 
 
 def tip(widget: QWidget, key: str) -> QWidget:
